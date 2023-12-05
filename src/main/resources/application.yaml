@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    username:
+    password:
+    url:
+    driver-class-name:
+
+  jpa:
+    database-platform:
+    show-sql: true
+
+logging:
+  level:
+    root: debug
+    sql: debug
+
+
