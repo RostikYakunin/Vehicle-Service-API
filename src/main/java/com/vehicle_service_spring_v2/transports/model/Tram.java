@@ -1,7 +1,9 @@
 package com.vehicle_service_spring_v2.transports.model;
 
+import jakarta.persistence.Access;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 public class Tram extends Transport {
     @Column(name = "railcar_amount")
     private Integer amountOfRailcar;

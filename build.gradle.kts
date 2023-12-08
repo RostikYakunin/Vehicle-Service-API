@@ -42,7 +42,7 @@ dependencies {
     //OTHERS
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+    //developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     annotationProcessor("org.projectlombok:lombok")
     implementation ("me.paulschwarz:spring-dotenv:4.0.0")
 }

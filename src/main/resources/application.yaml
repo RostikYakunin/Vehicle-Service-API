@@ -6,7 +6,8 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
-    show-sql: true
+    hibernate:
+      ddl-auto: validate
 
 logging:
   level:
@@ -17,7 +18,7 @@ logging:
         web: debug
 
   file:
-    name: vehicle_service_spring_v2/logs/log
+    name: logs/log.txt
 
 server:
   port: ${SERVER_PORT}

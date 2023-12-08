@@ -2,6 +2,7 @@ package com.vehicle_service_spring_v2.transports;
 
 import com.vehicle_service_spring_v2.drivers.model.Driver;
 import com.vehicle_service_spring_v2.routes.model.Route;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class TransportDto {
     private Long id;
     private String brandOfTransport;

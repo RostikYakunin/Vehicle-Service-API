@@ -1,5 +1,6 @@
 package com.vehicle_service_spring_v2.transports;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import java.util.Set;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class ReturnedTransport {
     private Long id;
     private String brandOfTransport;

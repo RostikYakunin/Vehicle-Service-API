@@ -17,7 +17,6 @@ import java.util.Set;
 @Table(name = "transports")
 @Getter
 @Setter
-@Builder
 public abstract class Transport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

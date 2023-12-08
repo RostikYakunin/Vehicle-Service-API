@@ -4,6 +4,7 @@ import com.vehicle_service_spring_v2.drivers.model.Driver;
 import com.vehicle_service_spring_v2.transports.model.Transport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
