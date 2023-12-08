@@ -1,17 +1,23 @@
 spring:
   datasource:
-    username:
-    password:
-    url:
-    driver-class-name:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${PGPORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
-    database-platform:
     show-sql: true
 
 logging:
   level:
-    root: debug
+    root: info
     sql: debug
+    org:
+      springframework:
+        web: debug
 
+  file:
+    name: vehicle_service_spring_v2/logs/log
 
+server:
+  port: ${SERVER_PORT}

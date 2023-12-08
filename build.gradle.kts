@@ -44,6 +44,7 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     annotationProcessor("org.projectlombok:lombok")
+    implementation ("me.paulschwarz:spring-dotenv:4.0.0")
 }
 
 tasks.withType<Test> {
