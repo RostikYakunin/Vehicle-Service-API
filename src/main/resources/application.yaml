@@ -9,6 +9,11 @@ spring:
     hibernate:
       ddl-auto: validate
 
+security:
+  jwt:
+    secret-key: 1b3e9a48f82fb349124e988a104a8fa9efa3a1cbf61de7701958b59be1e7655f
+    expiration-time: 3600000
+
 logging:
   level:
     root: info

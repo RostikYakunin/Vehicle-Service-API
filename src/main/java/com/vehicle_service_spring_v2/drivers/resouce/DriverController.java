@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/drivers")
 public class DriverController {
-
     private final DriverServiceI driverService;
 
     @Autowired
