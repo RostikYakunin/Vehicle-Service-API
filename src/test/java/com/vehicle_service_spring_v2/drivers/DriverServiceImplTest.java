@@ -78,9 +78,6 @@ class DriverServiceImplTest {
                 .qualificationEnum("BUS")
                 .build();
 
-        testDriverDto.getRoute().add(route);
-        testDriverDto.getTransport().add(bus);
-
         testRoute = Route.builder()
                 .id(1L)
                 .startOfWay("testStart")

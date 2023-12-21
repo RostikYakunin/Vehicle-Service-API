@@ -45,36 +45,6 @@ public class ReturnedConverter {
         return returnedRoute;
     }
 
-    public static ReturnedDriver convertToReturnedDriver(Driver driver) {
-        ReturnedDriver returnedDriver = new ReturnedDriver();
-
-        returnedDriver.setId(driver.getId());
-        returnedDriver.setNameOfDriver(driver.getNameOfDriver());
-        returnedDriver.setSurnameOfDriver(driver.getSurnameOfDriver());
-        returnedDriver.setPhoneNumber(driver.getPhoneNumber());
-        returnedDriver.setQualificationEnum(driver.getQualificationEnum().name());
-
-        Set<Route> route = driver.getRoute();
-        if (!route.isEmpty()) {
-            Set<Long> routesId = route.stream()
-                    .map(Route::getId)
-                    .collect(Collectors.toSet());
-
-            returnedDriver.getRouteId().addAll(routesId);
-        }
-
-        Set<Transport> transports = driver.getTransport();
-        if (!transports.isEmpty()) {
-            Set<Long> transportId = transports.stream()
-                    .map(Transport::getId)
-                    .collect(Collectors.toSet());
-
-            returnedDriver.getTransportId().addAll(transportId);
-        }
-
-        return returnedDriver;
-    }
-
     public static ReturnedTransport convertToReturnedTransport(Transport transport) {
         ReturnedTransport returnedTransport = new ReturnedTransport();
 

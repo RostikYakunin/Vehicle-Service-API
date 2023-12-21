@@ -5,10 +5,7 @@ import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.transports.model.Transport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +17,7 @@ import java.util.Set;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Driver {
     @Id
     @Column(name = "driver_id")
@@ -53,11 +51,7 @@ public class Driver {
     )
     private Set<Route> route = new HashSet<>();
 
-    public Driver() {
-    }
-
     public Driver(Long id) {
         this.id = id;
     }
-
 }

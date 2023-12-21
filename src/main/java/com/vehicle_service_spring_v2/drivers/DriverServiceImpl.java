@@ -1,8 +1,8 @@
 package com.vehicle_service_spring_v2.drivers;
 
 import com.vehicle_service_spring_v2.drivers.model.dto.DriverDto;
-import com.vehicle_service_spring_v2.drivers.model.dto.DriverDtoHandler;
 import com.vehicle_service_spring_v2.drivers.model.Driver;
+import com.vehicle_service_spring_v2.drivers.model.dto.DriverDtoMapper;
 import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.routes.RouteRepoI;
 import com.vehicle_service_spring_v2.transports.TransportDto;
@@ -10,8 +10,8 @@ import com.vehicle_service_spring_v2.transports.TransportDtoHandler;
 import com.vehicle_service_spring_v2.transports.TransportRepoI;
 import com.vehicle_service_spring_v2.transports.TransportServiceI;
 import com.vehicle_service_spring_v2.transports.model.Transport;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,25 +25,19 @@ import java.util.Set;
 @Service
 @Slf4j
 @Transactional
+@RequiredArgsConstructor
 public class DriverServiceImpl implements DriverServiceI {
-
     private final DriverRepoI driverRepo;
     private final TransportRepoI transportRepo;
     private final RouteRepoI routeRepo;
     private final TransportServiceI transportService;
+    private final DriverDtoMapper driverDtoMapper;
 
-    @Autowired
-    public DriverServiceImpl(DriverRepoI driverRepo, TransportRepoI transportRepo, RouteRepoI routeRepo, TransportServiceI transportService) {
-        this.driverRepo = driverRepo;
-        this.transportRepo = transportRepo;
-        this.routeRepo = routeRepo;
-        this.transportService = transportService;
-    }
 
 
     @Override
     public Driver addDriver(DriverDto driverDto) {
-        Driver driver = DriverDtoHandler.mappingDtoToDriverMethodAdd(driverDto);
+        Driver driver = driverDtoMapper.toDriver(driverDto);
         log.info("Driver was added to db: " + driver);
 
         return driverRepo.save(driver);
@@ -61,8 +55,8 @@ public class DriverServiceImpl implements DriverServiceI {
 
     @Override
     public Driver updateDriver(DriverDto driverDto) {
-        Optional<Driver> driver = driverRepo.findById(driverDto.getId());
-        Driver upgradeDriver = DriverDtoHandler.mappingDtoToDriverMethodUpdate(driverDto, driver);
+        //Optional<Driver> driver = driverRepo.findById(driverDto.getId());
+        Driver upgradeDriver = driverDtoMapper.toDriver(driverDto);
         log.info("Driver successfully updated " + upgradeDriver);
 
         return driverRepo.save(upgradeDriver);

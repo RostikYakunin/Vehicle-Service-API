@@ -5,7 +5,7 @@ import com.vehicle_service_spring_v2.drivers.model.Driver;
 import com.vehicle_service_spring_v2.drivers.model.DriverQualificationEnum;
 import com.vehicle_service_spring_v2.drivers.model.dto.DriverDto;
 import com.vehicle_service_spring_v2.drivers.model.dto.ReturnedConverter;
-import com.vehicle_service_spring_v2.drivers.model.dto.ReturnedDriver;
+import com.vehicle_service_spring_v2.drivers.model.dto.DriverView;
 import com.vehicle_service_spring_v2.drivers.resouce.DriverController;
 import com.vehicle_service_spring_v2.transports.ReturnedTransport;
 import com.vehicle_service_spring_v2.transports.model.Bus;
@@ -50,7 +50,7 @@ class DriverControllerTest {
     // tested objects
     DriverDto driverDtoTest;
     Driver driverBusTest;
-    ReturnedDriver returnedDriverTest;
+    DriverView driverViewTest;
     Bus bus;
     ReturnedTransport returnedTransport;
     Optional<Driver> optionalDriver;
@@ -74,7 +74,7 @@ class DriverControllerTest {
                 .qualificationEnum(DriverQualificationEnum.BUS_DRIVER)
                 .build();
 
-        returnedDriverTest = ReturnedDriver.builder()
+        driverViewTest = DriverView.builder()
                 .id(1L)
                 .nameOfDriver("testName")
                 .surnameOfDriver("testSurname")
@@ -115,11 +115,11 @@ class DriverControllerTest {
                 .andExpect(jsonPath("$.surnameOfDriver").isString())
                 .andExpect(jsonPath("$.phoneNumber").isString())
                 .andExpect(jsonPath("$.qualificationEnum").isString())
-                .andExpect(jsonPath("$.id").value(returnedDriverTest.getId()))
-                .andExpect(jsonPath("$.nameOfDriver").value(returnedDriverTest.getNameOfDriver()))
-                .andExpect(jsonPath("$.surnameOfDriver").value(returnedDriverTest.getSurnameOfDriver()))
-                .andExpect(jsonPath("$.phoneNumber").value(returnedDriverTest.getPhoneNumber()))
-                .andExpect(jsonPath("$.qualificationEnum").value(returnedDriverTest.getQualificationEnum()));
+                .andExpect(jsonPath("$.id").value(driverViewTest.getId()))
+                .andExpect(jsonPath("$.nameOfDriver").value(driverViewTest.getNameOfDriver()))
+                .andExpect(jsonPath("$.surnameOfDriver").value(driverViewTest.getSurnameOfDriver()))
+                .andExpect(jsonPath("$.phoneNumber").value(driverViewTest.getPhoneNumber()))
+                .andExpect(jsonPath("$.qualificationEnum").value(driverViewTest.getQualificationEnum()));
 
 
         verify(driverService, times(1)).addDriver(driverDtoArgumentCaptor.capture());
@@ -144,11 +144,11 @@ class DriverControllerTest {
                 .andExpect(jsonPath("$.surnameOfDriver").isString())
                 .andExpect(jsonPath("$.phoneNumber").isString())
                 .andExpect(jsonPath("$.qualificationEnum").isString())
-                .andExpect(jsonPath("$.id").value(returnedDriverTest.getId()))
-                .andExpect(jsonPath("$.nameOfDriver").value(returnedDriverTest.getNameOfDriver()))
-                .andExpect(jsonPath("$.surnameOfDriver").value(returnedDriverTest.getSurnameOfDriver()))
-                .andExpect(jsonPath("$.phoneNumber").value(returnedDriverTest.getPhoneNumber()))
-                .andExpect(jsonPath("$.qualificationEnum").value(returnedDriverTest.getQualificationEnum()));
+                .andExpect(jsonPath("$.id").value(driverViewTest.getId()))
+                .andExpect(jsonPath("$.nameOfDriver").value(driverViewTest.getNameOfDriver()))
+                .andExpect(jsonPath("$.surnameOfDriver").value(driverViewTest.getSurnameOfDriver()))
+                .andExpect(jsonPath("$.phoneNumber").value(driverViewTest.getPhoneNumber()))
+                .andExpect(jsonPath("$.qualificationEnum").value(driverViewTest.getQualificationEnum()));
 
         verify(driverService, times(1)).findDriverById(id.capture());
     }
@@ -173,11 +173,11 @@ class DriverControllerTest {
                 .andExpect(jsonPath("$.surnameOfDriver").isString())
                 .andExpect(jsonPath("$.phoneNumber").isString())
                 .andExpect(jsonPath("$.qualificationEnum").isString())
-                .andExpect(jsonPath("$.id").value(returnedDriverTest.getId()))
-                .andExpect(jsonPath("$.nameOfDriver").value(returnedDriverTest.getNameOfDriver()))
-                .andExpect(jsonPath("$.surnameOfDriver").value(returnedDriverTest.getSurnameOfDriver()))
-                .andExpect(jsonPath("$.phoneNumber").value(returnedDriverTest.getPhoneNumber()))
-                .andExpect(jsonPath("$.qualificationEnum").value(returnedDriverTest.getQualificationEnum()));
+                .andExpect(jsonPath("$.id").value(driverViewTest.getId()))
+                .andExpect(jsonPath("$.nameOfDriver").value(driverViewTest.getNameOfDriver()))
+                .andExpect(jsonPath("$.surnameOfDriver").value(driverViewTest.getSurnameOfDriver()))
+                .andExpect(jsonPath("$.phoneNumber").value(driverViewTest.getPhoneNumber()))
+                .andExpect(jsonPath("$.qualificationEnum").value(driverViewTest.getQualificationEnum()));
 
         verify(driverService, times(1)).updateDriver(driverDtoArgumentCaptor.capture());
     }
@@ -236,11 +236,11 @@ class DriverControllerTest {
                 .andExpect(jsonPath("$[0].surnameOfDriver").isString())
                 .andExpect(jsonPath("$[0].phoneNumber").isString())
                 .andExpect(jsonPath("$[0].qualificationEnum").isString())
-                .andExpect(jsonPath("$[0].id").value(returnedDriverTest.getId()))
-                .andExpect(jsonPath("$[0].nameOfDriver").value(returnedDriverTest.getNameOfDriver()))
-                .andExpect(jsonPath("$[0].surnameOfDriver").value(returnedDriverTest.getSurnameOfDriver()))
-                .andExpect(jsonPath("$[0].phoneNumber").value(returnedDriverTest.getPhoneNumber()))
-                .andExpect(jsonPath("$[0].qualificationEnum").value(returnedDriverTest.getQualificationEnum()));
+                .andExpect(jsonPath("$[0].id").value(driverViewTest.getId()))
+                .andExpect(jsonPath("$[0].nameOfDriver").value(driverViewTest.getNameOfDriver()))
+                .andExpect(jsonPath("$[0].surnameOfDriver").value(driverViewTest.getSurnameOfDriver()))
+                .andExpect(jsonPath("$[0].phoneNumber").value(driverViewTest.getPhoneNumber()))
+                .andExpect(jsonPath("$[0].qualificationEnum").value(driverViewTest.getQualificationEnum()));
 
         verify(driverService, times(1)).findAllDriverBySurname(surnameArgumentCaptor.capture());
     }
@@ -264,11 +264,11 @@ class DriverControllerTest {
                 .andExpect(jsonPath("$[0].surnameOfDriver").isString())
                 .andExpect(jsonPath("$[0].phoneNumber").isString())
                 .andExpect(jsonPath("$[0].qualificationEnum").isString())
-                .andExpect(jsonPath("$[0].id").value(returnedDriverTest.getId()))
-                .andExpect(jsonPath("$[0].nameOfDriver").value(returnedDriverTest.getNameOfDriver()))
-                .andExpect(jsonPath("$[0].surnameOfDriver").value(returnedDriverTest.getSurnameOfDriver()))
-                .andExpect(jsonPath("$[0].phoneNumber").value(returnedDriverTest.getPhoneNumber()))
-                .andExpect(jsonPath("$[0].qualificationEnum").value(returnedDriverTest.getQualificationEnum()));
+                .andExpect(jsonPath("$[0].id").value(driverViewTest.getId()))
+                .andExpect(jsonPath("$[0].nameOfDriver").value(driverViewTest.getNameOfDriver()))
+                .andExpect(jsonPath("$[0].surnameOfDriver").value(driverViewTest.getSurnameOfDriver()))
+                .andExpect(jsonPath("$[0].phoneNumber").value(driverViewTest.getPhoneNumber()))
+                .andExpect(jsonPath("$[0].qualificationEnum").value(driverViewTest.getQualificationEnum()));
 
         verify(driverService, times(1)).findAllDriverOnRoute(id.capture());
     }
@@ -320,11 +320,11 @@ class DriverControllerTest {
                 .andExpect(jsonPath("$[0].surnameOfDriver").isString())
                 .andExpect(jsonPath("$[0].phoneNumber").isString())
                 .andExpect(jsonPath("$[0].qualificationEnum").isString())
-                .andExpect(jsonPath("$[0].id").value(returnedDriverTest.getId()))
-                .andExpect(jsonPath("$[0].nameOfDriver").value(returnedDriverTest.getNameOfDriver()))
-                .andExpect(jsonPath("$[0].surnameOfDriver").value(returnedDriverTest.getSurnameOfDriver()))
-                .andExpect(jsonPath("$[0].phoneNumber").value(returnedDriverTest.getPhoneNumber()))
-                .andExpect(jsonPath("$[0].qualificationEnum").value(returnedDriverTest.getQualificationEnum()));
+                .andExpect(jsonPath("$[0].id").value(driverViewTest.getId()))
+                .andExpect(jsonPath("$[0].nameOfDriver").value(driverViewTest.getNameOfDriver()))
+                .andExpect(jsonPath("$[0].surnameOfDriver").value(driverViewTest.getSurnameOfDriver()))
+                .andExpect(jsonPath("$[0].phoneNumber").value(driverViewTest.getPhoneNumber()))
+                .andExpect(jsonPath("$[0].qualificationEnum").value(driverViewTest.getQualificationEnum()));
 
         verify(driverService, times(1)).findAllDrivers();
     }

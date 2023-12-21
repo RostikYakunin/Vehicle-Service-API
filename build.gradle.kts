@@ -26,6 +26,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     //SPRING SECURITY
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -46,10 +47,11 @@ dependencies {
 
     //OTHERS
     compileOnly("org.projectlombok:lombok")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    //developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     annotationProcessor("org.projectlombok:lombok")
     implementation ("me.paulschwarz:spring-dotenv:4.0.0")
+    implementation ("org.mapstruct:mapstruct:1.5.5.Final")
+    annotationProcessor ("org.mapstruct:mapstruct-processor:1.5.5.Final")
+    testAnnotationProcessor ("org.mapstruct:mapstruct-processor:1.5.5.Final")
 }
 
 tasks.withType<Test> {

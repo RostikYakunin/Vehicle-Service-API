@@ -3,6 +3,7 @@ package com.vehicle_service_spring_v2.drivers.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +11,8 @@ import java.util.Set;
 @Data
 @Builder
 @AllArgsConstructor
-public class ReturnedDriver {
+@NoArgsConstructor
+public class DriverView {
     private Long id;
     private String nameOfDriver;
     private String surnameOfDriver;
@@ -18,7 +20,4 @@ public class ReturnedDriver {
     private String qualificationEnum;
     private Set<Long> transportId = new HashSet<>();
     private Set<Long> routeId = new HashSet<>();
-
-    public ReturnedDriver() {
-    }
 }
