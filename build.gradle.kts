@@ -45,10 +45,14 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 
-    //OTHERS
+    //LOMBOK
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
+
+    //ENVIRONMENT VARIABLES HANDLER
     implementation ("me.paulschwarz:spring-dotenv:4.0.0")
+
+    //MAPSTRUCT MAPPER
     implementation ("org.mapstruct:mapstruct:1.5.5.Final")
     annotationProcessor ("org.mapstruct:mapstruct-processor:1.5.5.Final")
     testAnnotationProcessor ("org.mapstruct:mapstruct-processor:1.5.5.Final")
