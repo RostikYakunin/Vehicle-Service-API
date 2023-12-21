@@ -11,8 +11,8 @@ spring:
 
 security:
   jwt:
-    secret-key: 1b3e9a48f82fb349124e988a104a8fa9efa3a1cbf61de7701958b59be1e7655f
-    expiration-time: 3600000
+    secret-key: ${SECRET_KEY}
+    expiration-time: ${EXP_TIME}
 
 logging:
   level:
@@ -23,7 +23,7 @@ logging:
         web: debug
 
   file:
-    name: logs/log.txt
+    name: ${LOG_PATH}
 
 server:
   port: ${SERVER_PORT}
