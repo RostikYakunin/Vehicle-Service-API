@@ -5,8 +5,8 @@ import com.vehicle_service_spring_v2.drivers.model.Driver;
 import com.vehicle_service_spring_v2.drivers.model.dto.DriverDto;
 import com.vehicle_service_spring_v2.drivers.model.dto.DriverView;
 import com.vehicle_service_spring_v2.drivers.model.dto.DriverViewMapper;
-import com.vehicle_service_spring_v2.drivers.model.dto.ReturnedConverter;
-import com.vehicle_service_spring_v2.transports.ReturnedTransport;
+import com.vehicle_service_spring_v2.transports.model.dto.views.TransportView;
+import com.vehicle_service_spring_v2.transports.model.dto.views.mappers.BusViewMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,11 +26,12 @@ import java.util.stream.Stream;
 public class DriverController {
     private final DriverServiceI driverService;
     private final DriverViewMapper driverViewMapper;
+    private final BusViewMapper transportViewMapper;
 
     @PostMapping("/")
     public ResponseEntity<DriverView> createDriver(@RequestBody @Valid DriverDto driverDto) {
         DriverView driver = Stream.of(driverService.addDriver(driverDto))
-                .map(driverViewMapper::driverToDriverView)
+                .map(driverViewMapper::toDriverView)
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong"));
 
@@ -44,14 +45,14 @@ public class DriverController {
                         () -> new RuntimeException("Driver with id = " + id + " not found")
                 );
 
-        return ResponseEntity.ok(driverViewMapper.driverToDriverView(driver));
+        return ResponseEntity.ok(driverViewMapper.toDriverView(driver));
     }
 
     @PutMapping("/")
     public ResponseEntity<DriverView> updateDriver(@RequestBody @Valid DriverDto driverDto) {
         Driver updateDriver = driverService.updateDriver(driverDto);
 
-        return ResponseEntity.ok(driverViewMapper.driverToDriverView(updateDriver));
+        return ResponseEntity.ok(driverViewMapper.toDriverView(updateDriver));
     }
 
     @DeleteMapping("/{id}")
@@ -72,7 +73,7 @@ public class DriverController {
     @GetMapping("/surname/{surname}")
     public ResponseEntity<List<DriverView>> findAllDriverBySurname(@PathVariable String surname) {
         List<DriverView> drivers = driverService.findAllDriverBySurname(surname).stream()
-                .map(driverViewMapper::driverToDriverView)
+                .map(driverViewMapper::toDriverView)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(drivers);
@@ -81,16 +82,16 @@ public class DriverController {
     @GetMapping("/drivers_on_route/{id}")
     public ResponseEntity<Set<DriverView>> findAllDriverOnRoute(@PathVariable long id) {
         Set<DriverView> drivers = driverService.findAllDriverOnRoute(id).stream()
-                .map(driverViewMapper::driverToDriverView)
+                .map(driverViewMapper::toDriverView)
                 .collect(Collectors.toSet());
 
         return ResponseEntity.ok(drivers);
     }
 
     @GetMapping("/transport_without_driver")
-    public ResponseEntity<List<ReturnedTransport>> findAllTransportsWithoutDriver() {
-        List<ReturnedTransport> transports = driverService.findAllTransportsWithoutDriver().stream()
-                .map(ReturnedConverter::convertToReturnedTransport)
+    public ResponseEntity<List<TransportView>> findAllTransportsWithoutDriver() {
+        List<TransportView> transports = driverService.findAllTransportsWithoutDriver().stream()
+                .map(transportViewMapper::transportToTransportView)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(transports);
@@ -99,7 +100,7 @@ public class DriverController {
     @GetMapping("/")
     public ResponseEntity<List<DriverView>> findAllDrivers() {
         List<DriverView> dr = driverService.findAllDrivers().stream()
-                .map(driverViewMapper::driverToDriverView)
+                .map(driverViewMapper::toDriverView)
                 .toList();
 
         return ResponseEntity.ok(new ArrayList<>(dr));

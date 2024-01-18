@@ -1,15 +1,15 @@
 package com.vehicle_service_spring_v2.drivers;
 
-import com.vehicle_service_spring_v2.drivers.model.dto.DriverDto;
 import com.vehicle_service_spring_v2.drivers.model.Driver;
+import com.vehicle_service_spring_v2.drivers.model.dto.DriverDto;
 import com.vehicle_service_spring_v2.drivers.model.dto.DriverDtoMapper;
-import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.routes.RouteRepoI;
-import com.vehicle_service_spring_v2.transports.TransportDto;
-import com.vehicle_service_spring_v2.transports.TransportDtoHandler;
+import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.transports.TransportRepoI;
 import com.vehicle_service_spring_v2.transports.TransportServiceI;
 import com.vehicle_service_spring_v2.transports.model.Transport;
+import com.vehicle_service_spring_v2.transports.model.dto.dtos.TransportDto;
+import com.vehicle_service_spring_v2.transports.model.dto.dtos.mappers.BusDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,8 +32,7 @@ public class DriverServiceImpl implements DriverServiceI {
     private final RouteRepoI routeRepo;
     private final TransportServiceI transportService;
     private final DriverDtoMapper driverDtoMapper;
-
-
+    private final BusDtoMapper transportDtoMapper;
 
     @Override
     public Driver addDriver(DriverDto driverDto) {
@@ -92,7 +91,7 @@ public class DriverServiceImpl implements DriverServiceI {
         }
 
         transport.get().getDrivers().add(driver.get());
-        TransportDto transportDto = TransportDtoHandler.createTransportDto(transport.get());
+        TransportDto transportDto = transportDtoMapper.transportToTransportDto(transport.get());
 
         transportService.updateTransport(transportDto);
         log.info("Driver: " + driver.get() + " successful added to transport " + transport.get());

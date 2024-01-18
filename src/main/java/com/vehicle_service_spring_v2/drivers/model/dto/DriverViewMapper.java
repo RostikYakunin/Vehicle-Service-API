@@ -16,7 +16,7 @@ public interface DriverViewMapper {
     @Mapping(source = "qualificationEnum", target = "qualificationEnum", qualifiedByName = "mapEnumToString")
     @Mapping(source = "transport", target = "transportId", qualifiedByName = "mapTransportSetToTransportIdSet")
     @Mapping(source = "route", target = "routeId", qualifiedByName = "mapRouteSetToRouteIdSet")
-    DriverView driverToDriverView(Driver driver);
+    DriverView toDriverView(Driver driver);
 
     @Named("mapEnumToString")
     default String mapEnumToString(DriverQualificationEnum qualificationEnum) {

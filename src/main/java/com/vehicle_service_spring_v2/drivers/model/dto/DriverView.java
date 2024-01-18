@@ -1,5 +1,6 @@
 package com.vehicle_service_spring_v2.drivers.model.dto;
 
+import com.vehicle_service_spring_v2.drivers.model.DriverQualificationEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ public class DriverView {
     private String nameOfDriver;
     private String surnameOfDriver;
     private String phoneNumber;
-    private String qualificationEnum;
+    private DriverQualificationEnum qualificationEnum;
     private Set<Long> transportId = new HashSet<>();
     private Set<Long> routeId = new HashSet<>();
 }
