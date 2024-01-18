@@ -8,17 +8,18 @@ import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.Objects;
 import java.util.Set;
-
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(callSuper = true)
 public class Bus extends Transport {
     @Builder
-    public Bus(Long id, @NotBlank(message = "Error, transport`s brand cannot be empty") String brandOfTransport, Integer amountOfPassengers, DriverQualificationEnum driverQualificationEnum, Set<Driver> drivers, Set<Route> route, String type, Integer amountOfDoors) {
+    public Bus(Long id, String brandOfTransport, Integer amountOfPassengers, DriverQualificationEnum driverQualificationEnum, Set<Driver> drivers, Set<Route> route, String type, Integer amountOfDoors) {
         super(id, brandOfTransport, amountOfPassengers, driverQualificationEnum, drivers, route);
         this.type = type;
         this.amountOfDoors = amountOfDoors;
@@ -30,4 +31,18 @@ public class Bus extends Transport {
 
     @Column(name = "doors_amount")
     private Integer amountOfDoors;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Bus bus = (Bus) o;
+        return Objects.equals(type, bus.type) && Objects.equals(amountOfDoors, bus.amountOfDoors);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type, amountOfDoors);
+    }
 }
