@@ -1,13 +1,12 @@
 package com.vehicle_service_spring_v2.routes;
 
 
-import com.vehicle_service_spring_v2.drivers.DriverRepoI;
 import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.routes.model.dto.RouteDto;
-import com.vehicle_service_spring_v2.routes.model.dto.RouteDtoHandler;
-import com.vehicle_service_spring_v2.transports.TransportRepoI;
+import com.vehicle_service_spring_v2.routes.model.dto.RouteDtoMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,22 +14,14 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class RouteServiceImpl implements RouteServiceI {
-
-    private final DriverRepoI driverRepo;
-    private final TransportRepoI transportRepo;
     private final RouteRepoI routeRepo;
-
-    @Autowired
-    public RouteServiceImpl(DriverRepoI driverRepo, TransportRepoI transportRepo, RouteRepoI routeRepo) {
-        this.driverRepo = driverRepo;
-        this.transportRepo = transportRepo;
-        this.routeRepo = routeRepo;
-    }
+    private final RouteDtoMapper routeDtoMapper;
 
     @Override
     public Route addRoute(RouteDto routeDto) {
-        Route route = RouteDtoHandler.mappingDtoToRouteMethodAdd(routeDto);
+        Route route = routeDtoMapper.routeDtoToRoute(routeDto);
         log.info("New route was added to db: " + route);
 
         return routeRepo.save(route);
@@ -50,7 +41,7 @@ public class RouteServiceImpl implements RouteServiceI {
     public Route updateRoute(RouteDto routeDto) {
         Optional<Route> foundRoute = routeRepo.findById(routeDto.getId());
 
-        Route updatedRoute = RouteDtoHandler.mappingDtoToRouteMethodUpdate(routeDto, foundRoute);
+        Route updatedRoute = routeDtoMapper.routeDtoToRoute(routeDto);
         log.info("Route updated successful");
 
         return routeRepo.save(updatedRoute);
