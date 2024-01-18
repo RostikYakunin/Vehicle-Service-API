@@ -6,8 +6,9 @@ import com.vehicle_service_spring_v2.drivers.model.DriverQualificationEnum;
 import com.vehicle_service_spring_v2.routes.model.Route;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -17,6 +18,8 @@ import java.util.Set;
 @Table(name = "transports")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public abstract class Transport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +31,7 @@ public abstract class Transport {
 
     @Column(name = "amount_of_passengers")
     private Integer amountOfPassengers;
+
     @Enumerated(EnumType.STRING)
     private DriverQualificationEnum driverQualificationEnum;
 
@@ -46,13 +50,4 @@ public abstract class Transport {
             inverseJoinColumns = @JoinColumn(name = "route_id")
     )
     private Set<Route> route = new HashSet<>();
-
-    public Transport() {
-    }
-
-    @Override
-    public String toString() {
-        return "\nTransport ID " + id + ", model: " + brandOfTransport + ", numbers of passengers: " + amountOfPassengers +
-                ", driver qualification: " + driverQualificationEnum.name();
-    }
 }
