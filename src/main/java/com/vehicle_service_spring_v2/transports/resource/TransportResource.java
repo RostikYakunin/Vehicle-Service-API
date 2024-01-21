@@ -5,6 +5,7 @@ import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
 import com.vehicle_service_spring_v2.transports.model.dto.TransportView;
 import com.vehicle_service_spring_v2.utils.ViewMapperUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +16,13 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/api/transports")
 @RequiredArgsConstructor
-public class TransportController {
+public class TransportResource {
     private final TransportServiceI transportService;
     private final ViewMapperUtil viewMapperUtil;
 
     @PostMapping
     public ResponseEntity<TransportView> createTransport(@RequestBody TransportDto transportDto) {
-        return ResponseEntity.ok(
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 Stream.of(transportService.addTransport(transportDto))
                         .map(viewMapperUtil::mapTransportToView)
                         .findFirst()
@@ -85,21 +86,17 @@ public class TransportController {
     public ResponseEntity<?> addTransportToRoute(@PathVariable long transportId, @PathVariable long routeId) {
         boolean result = transportService.addTransportToRoute(transportId, routeId);
 
-        if (result) {
-            return ResponseEntity.ok("Transport with id " + transportId + " was added to route with id " + routeId);
-        }
-
-        return ResponseEntity.badRequest().body("Something went wrong !");
+        return result
+                ? ResponseEntity.ok("Transport with id " + transportId + " was added to route with id " + routeId)
+                : ResponseEntity.badRequest().body("Something went wrong!");
     }
 
     @DeleteMapping("/transport_from_route/{transportId}/{routeId}")
     public ResponseEntity<?> removeTransportFromRoute(@PathVariable long transportId, @PathVariable long routeId) {
         boolean result = transportService.removeTransportFromRoute(transportId, routeId);
 
-        if (result) {
-            return ResponseEntity.ok("Transport with id " + transportId + " was deleted from route with id " + routeId);
-        }
-
-        return ResponseEntity.badRequest().body("Something went wrong !");
+        return result
+                ? ResponseEntity.ok("Transport with id " + transportId + " was deleted from route with id " + routeId)
+                : ResponseEntity.badRequest().body("Something went wrong !");
     }
 }
