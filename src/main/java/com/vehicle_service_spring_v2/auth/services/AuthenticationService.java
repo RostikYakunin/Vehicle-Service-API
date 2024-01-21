@@ -10,6 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -18,6 +20,12 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public User signup(UserRegisterDto input) {
+        Optional<User> byEmail = userRepository.findByEmail(input.getEmail());
+
+        if (byEmail.isPresent()) {
+            return byEmail.get();
+        }
+
         User user = User.builder()
                 .firstName(input.getFirstName())
                 .lastName(input.getLastName())
@@ -38,6 +46,6 @@ public class AuthenticationService {
         );
 
         return userRepository.findByEmail(input.getEmail())
-                .orElseThrow( () -> new RuntimeException("User not found by this email"));
+                .orElseThrow(() -> new RuntimeException("User not found by this email"));
     }
 }
