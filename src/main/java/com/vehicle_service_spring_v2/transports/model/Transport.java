@@ -7,9 +7,9 @@ import com.vehicle_service_spring_v2.routes.model.Route;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -19,6 +19,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode
+@SuperBuilder
 public abstract class Transport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,17 +51,4 @@ public abstract class Transport {
             inverseJoinColumns = @JoinColumn(name = "route_id")
     )
     private Set<Route> route = new HashSet<>();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Transport transport = (Transport) o;
-        return Objects.equals(id, transport.id) && Objects.equals(brandOfTransport, transport.brandOfTransport) && Objects.equals(amountOfPassengers, transport.amountOfPassengers) && driverQualificationEnum == transport.driverQualificationEnum && Objects.equals(drivers, transport.drivers) && Objects.equals(route, transport.route);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, brandOfTransport, amountOfPassengers, driverQualificationEnum, drivers, route);
-    }
 }
