@@ -7,6 +7,7 @@ import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Tram;
 import com.vehicle_service_spring_v2.transports.model.dto.BusView;
 import com.vehicle_service_spring_v2.transports.model.dto.TramView;
+import com.vehicle_service_spring_v2.transports.model.dto.TransportView;
 import com.vehicle_service_spring_v2.transports.model.dto.TransportViewMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,71 @@ class TransportViewMapperTest {
 
         // When
         TramView actualResult = transportViewMapper.toTramView(testTram);
+
+        // Then
+        assertEquals(expected, actualResult);
+    }
+
+    @Test
+    void toTransportViewFromTramView() {
+        // Given
+        TransportView expected = TransportView.builder()
+                .id(1L)
+                .brandOfTransport("testBrand")
+                .amountOfPassengers(2)
+                .driverQualificationEnum(DriverQualificationEnum.TRAM_DRIVER.name())
+                .amountOfRailcar(2)
+                .amountOfDoors(null)
+                .type(null)
+                .driversId(Set.of(1L))
+                .routesId(Set.of(1L))
+                .build();
+
+        TramView tested = TramView.builder()
+                .id(1L)
+                .brandOfTransport("testBrand")
+                .amountOfPassengers(2)
+                .driverQualificationEnum(DriverQualificationEnum.TRAM_DRIVER.name())
+                .amountOfRailcar(2)
+                .driversId(Set.of(1L))
+                .routesId(Set.of(1L))
+                .build();
+
+        // When
+        TransportView actualResult = transportViewMapper.toView(tested);
+
+        // Then
+        assertEquals(expected, actualResult);
+    }
+
+    @Test
+    void toTransportViewFromBusView() {
+        // Given
+        TransportView expected = TransportView.builder()
+                .id(1L)
+                .brandOfTransport("testBrand")
+                .amountOfPassengers(2)
+                .driverQualificationEnum(DriverQualificationEnum.TRAM_DRIVER.name())
+                .amountOfRailcar(null)
+                .amountOfDoors(2)
+                .type("testType")
+                .driversId(Set.of(1L))
+                .routesId(Set.of(1L))
+                .build();
+
+        BusView tested = BusView.builder()
+                .id(1L)
+                .brandOfTransport("testBrand")
+                .amountOfPassengers(2)
+                .driverQualificationEnum(DriverQualificationEnum.TRAM_DRIVER.name())
+                .type("testType")
+                .amountOfDoors(2)
+                .driversId(Set.of(1L))
+                .routesId(Set.of(1L))
+                .build();
+
+        // When
+        TransportView actualResult = transportViewMapper.toView(tested);
 
         // Then
         assertEquals(expected, actualResult);

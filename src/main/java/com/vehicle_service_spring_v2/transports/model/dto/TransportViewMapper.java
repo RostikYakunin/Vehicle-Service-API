@@ -21,6 +21,9 @@ public interface TransportViewMapper {
     @Mapping(source = "drivers", target = "driversId", qualifiedByName = "mapDriverSet")
     TramView toTramView(Tram tram);
 
+    TransportView toView (BusView busView);
+    TransportView toView (TramView tramView);
+
     @Named("mapRoutesSet")
     default Set<Long> mapRoutesSet(Set<Route> transports) {
         return transports.stream().map(Route::getId).collect(Collectors.toSet());
