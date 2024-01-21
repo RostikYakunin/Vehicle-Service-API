@@ -24,6 +24,5 @@ public class ViewMapperUtil {
             case TRAM_DRIVER -> transportViewMapper.toView(transportViewMapper.toTramView((Tram) transport));
             default -> throw new RuntimeException("Unknown qualification=" + transport.getDriverQualificationEnum());
         };
-
     }
 }

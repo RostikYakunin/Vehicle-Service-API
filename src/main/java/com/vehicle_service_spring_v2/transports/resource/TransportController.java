@@ -1,88 +1,105 @@
 package com.vehicle_service_spring_v2.transports.resource;
 
-import com.vehicle_service_spring_v2.drivers.model.dto.ReturnedConverter;
-import com.vehicle_service_spring_v2.transports.ReturnedTransport;
-import com.vehicle_service_spring_v2.transports.TransportDto;
 import com.vehicle_service_spring_v2.transports.TransportServiceI;
-import com.vehicle_service_spring_v2.transports.model.Transport;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
+import com.vehicle_service_spring_v2.transports.model.dto.TransportView;
+import com.vehicle_service_spring_v2.utils.ViewMapperUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/transports")
+@RequiredArgsConstructor
 public class TransportController {
-
-    TransportServiceI transportService;
-
-    @Autowired
-    public TransportController(TransportServiceI transportService) {
-        this.transportService = transportService;
-    }
+    private final TransportServiceI transportService;
+    private final ViewMapperUtil viewMapperUtil;
 
     @PostMapping
-    public ResponseEntity<ReturnedTransport> createTransport(@RequestBody TransportDto transportDto) {
-        ReturnedTransport transport = ReturnedConverter.convertToReturnedTransport(transportService.addTransport(transportDto));
-        return ResponseEntity.status(HttpStatus.CREATED).body(transport);
+    public ResponseEntity<TransportView> createTransport(@RequestBody TransportDto transportDto) {
+        return ResponseEntity.ok(
+                Stream.of(transportService.addTransport(transportDto))
+                        .map(viewMapperUtil::mapTransportToView)
+                        .findFirst()
+                        .orElseThrow(
+                                () -> new RuntimeException("Something went wrong !")
+                        )
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReturnedTransport> findTransportById(@PathVariable long id) {
-        Transport transport = transportService.findTransportById(id)
+    public ResponseEntity<TransportView> findTransportById(@PathVariable long id) {
+        return transportService.findTransportById(id)
+                .map(transport -> ResponseEntity.ok(viewMapperUtil.mapTransportToView(transport)))
                 .orElseThrow(() -> new RuntimeException("Transport with " + id + " not found"));
-
-        return ResponseEntity.ok(ReturnedConverter.convertToReturnedTransport(transport));
     }
 
     @PutMapping
-    public ResponseEntity<ReturnedTransport> updateTransport(@RequestBody TransportDto transportDto) {
-        ReturnedTransport transport = ReturnedConverter.convertToReturnedTransport(transportService.updateTransport(transportDto));
-        return ResponseEntity.ok(transport);
+    public ResponseEntity<TransportView> updateTransport(@RequestBody TransportDto transportDto) {
+        return ResponseEntity.ok(
+                Stream.of(transportService.updateTransport(transportDto))
+                        .map(viewMapperUtil::mapTransportToView)
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Something went wrong!"))
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTransportById(@PathVariable long id) {
+    public ResponseEntity<?> deleteTransportById(@PathVariable long id) {
         transportService.deleteTransportById(id);
         return ResponseEntity.ok("Transport with id " + id + " was deleted");
     }
 
     @GetMapping
-    public ResponseEntity<List<ReturnedTransport>> findAllTransports() {
-        List<ReturnedTransport> transports = transportService.findAllTransports().stream()
-                .map(ReturnedConverter::convertToReturnedTransport)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(transports);
+    public ResponseEntity<List<TransportView>> findAllTransports() {
+        return ResponseEntity.ok(
+                transportService.findAllTransports().stream()
+                        .map(viewMapperUtil::mapTransportToView)
+                        .collect(Collectors.toList())
+        );
     }
 
     @GetMapping("/by_brand/{brand}")
-    public ResponseEntity<List<ReturnedTransport>> findTransportByBrand(@PathVariable String brand) {
-        List<ReturnedTransport> transports = transportService.findTransportByBrand(brand).stream()
-                .map(ReturnedConverter::convertToReturnedTransport)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(transports);
+    public ResponseEntity<List<TransportView>> findTransportByBrand(@PathVariable String brand) {
+        return ResponseEntity.ok(
+                transportService.findTransportByBrand(brand).stream()
+                        .map(viewMapperUtil::mapTransportToView)
+                        .collect(Collectors.toList())
+        );
     }
 
     @GetMapping("/without_driver")
-    public ResponseEntity<List<ReturnedTransport>> findTransportWithoutDriver() {
-        List<ReturnedTransport> transports = transportService.findTransportWithoutDriver().stream()
-                .map(ReturnedConverter::convertToReturnedTransport)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(transports);
+    public ResponseEntity<List<TransportView>> findTransportWithoutDriver() {
+        return ResponseEntity.ok(
+                transportService.findTransportWithoutDriver().stream()
+                        .map(viewMapperUtil::mapTransportToView)
+                        .collect(Collectors.toList())
+        );
     }
 
     @PutMapping("/transport_to_route/{transportId}/{routeId}")
-    public ResponseEntity<String> addTransportToRoute(@PathVariable long transportId, @PathVariable long routeId) {
-        transportService.addTransportToRoute(transportId, routeId);
-        return ResponseEntity.ok("Transport with id " + transportId + " was added to route with id " + routeId);
+    public ResponseEntity<?> addTransportToRoute(@PathVariable long transportId, @PathVariable long routeId) {
+        boolean result = transportService.addTransportToRoute(transportId, routeId);
+
+        if (result) {
+            return ResponseEntity.ok("Transport with id " + transportId + " was added to route with id " + routeId);
+        }
+
+        return ResponseEntity.badRequest().body("Something went wrong !");
     }
 
     @DeleteMapping("/transport_from_route/{transportId}/{routeId}")
-    public ResponseEntity<String> removeTransportFromRoute(@PathVariable long transportId, @PathVariable long routeId) {
-        transportService.removeTransportFromRoute(transportId, routeId);
-        return ResponseEntity.ok("Transport with id " + transportId + " was deleted from route with id " + routeId);
+    public ResponseEntity<?> removeTransportFromRoute(@PathVariable long transportId, @PathVariable long routeId) {
+        boolean result = transportService.removeTransportFromRoute(transportId, routeId);
+
+        if (result) {
+            return ResponseEntity.ok("Transport with id " + transportId + " was deleted from route with id " + routeId);
+        }
+
+        return ResponseEntity.badRequest().body("Something went wrong !");
     }
 }

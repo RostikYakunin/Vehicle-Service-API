@@ -1,6 +1,7 @@
 package com.vehicle_service_spring_v2.transports;
 
 import com.vehicle_service_spring_v2.transports.model.Transport;
+import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
