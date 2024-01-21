@@ -1,7 +1,11 @@
 package com.vehicle_service_spring_v2.utils;
 
+import com.vehicle_service_spring_v2.drivers.model.Driver;
 import com.vehicle_service_spring_v2.drivers.model.DriverQualificationEnum;
+import com.vehicle_service_spring_v2.drivers.model.dto.DriverView;
 import com.vehicle_service_spring_v2.drivers.model.dto.DriverViewMapper;
+import com.vehicle_service_spring_v2.routes.model.Route;
+import com.vehicle_service_spring_v2.routes.model.dto.RouteView;
 import com.vehicle_service_spring_v2.routes.model.dto.RouteViewMapper;
 import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Tram;
@@ -24,5 +28,13 @@ public class ViewMapperUtil {
             case TRAM_DRIVER -> transportViewMapper.toView(transportViewMapper.toTramView((Tram) transport));
             default -> throw new RuntimeException("Unknown qualification=" + transport.getDriverQualificationEnum());
         };
+    }
+
+    public RouteView mapRouteToView (Route route) {
+        return routeViewMapper.routeToRouteView(route);
+    }
+
+    public DriverView mapDriverToView (Driver driver){
+        return driverViewMapper.toDriverView(driver);
     }
 }
