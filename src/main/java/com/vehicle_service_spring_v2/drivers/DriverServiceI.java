@@ -16,7 +16,7 @@ public interface DriverServiceI {
 
     Driver addDriver(DriverDto driverDto);
 
-    Optional<Driver> findDriverById(Long id);
+    Driver findDriverById(Long id);
 
     Driver updateDriver(DriverDto driver);
 

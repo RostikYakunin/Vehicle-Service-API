@@ -8,8 +8,8 @@ import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.transports.TransportRepoI;
 import com.vehicle_service_spring_v2.transports.TransportServiceI;
 import com.vehicle_service_spring_v2.transports.model.Transport;
-import com.vehicle_service_spring_v2.transports.model.dto.dtos.TransportDto;
-import com.vehicle_service_spring_v2.transports.model.dto.dtos.mappers.BusDtoMapper;
+import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
+import com.vehicle_service_spring_v2.transports.model.dto.TransportDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -32,7 +31,7 @@ public class DriverServiceImpl implements DriverServiceI {
     private final RouteRepoI routeRepo;
     private final TransportServiceI transportService;
     private final DriverDtoMapper driverDtoMapper;
-    private final BusDtoMapper transportDtoMapper;
+    private final TransportDtoMapper transportDtoMapper;
 
     @Override
     public Driver addDriver(DriverDto driverDto) {
@@ -43,18 +42,19 @@ public class DriverServiceImpl implements DriverServiceI {
     }
 
     @Override
-    public Optional<Driver> findDriverById(Long id) {
-        if (driverRepo.findById(id).isEmpty()) {
-            log.warn("Error, driver with id = " + id + " not found");
-            return Optional.empty();
-        }
-
-        return driverRepo.findById(id);
+    public Driver findDriverById(Long id) {
+        return driverRepo.findById(id)
+                .filter(x -> driverRepo.existsById(id))
+                .orElseThrow(
+                        () -> {
+                            log.warn("Error, driver with id = " + id + " not found");
+                            throw new RuntimeException("Driver with id=" + id + " not found !");
+                        }
+                );
     }
 
     @Override
     public Driver updateDriver(DriverDto driverDto) {
-        //Optional<Driver> driver = driverRepo.findById(driverDto.getId());
         Driver upgradeDriver = driverDtoMapper.toDriver(driverDto);
         log.info("Driver successfully updated " + upgradeDriver);
 
@@ -63,15 +63,13 @@ public class DriverServiceImpl implements DriverServiceI {
 
     @Override
     public boolean deleteDriverById(Long id) {
-        Optional<Driver> foundDriver = driverRepo.findById(id);
+        Driver foundDriver = driverRepo.findById(id).orElseThrow(
+                () -> new RuntimeException("Error, driver with id = " + id + " not found")
+        );
 
-        if (foundDriver.isEmpty()) {
-            log.warn("Error, driver with id = " + id + " not found");
-            return false;
-        }
-
-        if (!foundDriver.get().getTransport().isEmpty()) {
-            log.warn("This driver can`t be deleted, driver is assigned to the transport = " + foundDriver.get());
+        boolean isEmpty = foundDriver.getTransport().isEmpty();
+        if (!isEmpty) {
+            log.warn("This driver can`t be deleted, driver is assigned to the transport = " + foundDriver);
             return false;
         }
 
@@ -82,41 +80,36 @@ public class DriverServiceImpl implements DriverServiceI {
 
     @Override
     public boolean addDriverOnTransport(long driverId, long transportId) {
-        Optional<Driver> driver = driverRepo.findById(driverId);
-        Optional<Transport> transport = transportRepo.findById(transportId);
+        Driver driver = driverRepo.findById(driverId).orElseThrow(
+                () -> new RuntimeException("Driver with id=" + driverId + " not found !")
+        );
 
-        if (driver.isEmpty() || transport.isEmpty()) {
-            log.warn("Driver or transport is null !");
-            return false;
-        }
+        Transport transport = transportRepo.findById(transportId).orElseThrow(
+                () -> new RuntimeException("Transport with id=" + transportId + " not found !")
+        );
 
-        transport.get().getDrivers().add(driver.get());
-        TransportDto transportDto = transportDtoMapper.transportToTransportDto(transport.get());
+        transport.getDrivers().add(driver);
+        TransportDto transportDto = transportDtoMapper.toDto(transport);
 
         transportService.updateTransport(transportDto);
-        log.info("Driver: " + driver.get() + " successful added to transport " + transport.get());
+        log.info("Driver: " + driver + " successful added to transport " + transport);
         return true;
     }
 
     @Override
     public List<Driver> findAllDriverBySurname(String surname) {
-        List<Driver> driverList;
-        driverList = driverRepo.findDriversBySurname(surname);
-
         log.info("Users list was successful prepared");
-        return driverList;
+        return driverRepo.findDriversBySurname(surname);
     }
 
     @Override
     public Set<Driver> findAllDriverOnRoute(long routeId) {
-        Optional<Route> foundRoute = routeRepo.findById(routeId);
-
-        if (foundRoute.isEmpty()) {
-            log.warn("Route with id= " + routeId + " not found");
-            return Collections.emptySet();
-        }
-
-        return foundRoute.get().getDrivers();
+        return routeRepo.findById(routeId)
+                .map(Route::getDrivers)
+                .orElseGet(() -> {
+                    log.warn("Route with id= " + routeId + " not found");
+                    return Collections.emptySet();
+                });
     }
 
     @Override

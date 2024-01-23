@@ -12,7 +12,7 @@ public interface TransportServiceI {
 
     Transport addTransport(TransportDto transportDto);
 
-    Optional<Transport> findTransportById(Long id);
+    Transport findTransportById(Long id);
 
     Transport updateTransport(TransportDto transportDto);
 

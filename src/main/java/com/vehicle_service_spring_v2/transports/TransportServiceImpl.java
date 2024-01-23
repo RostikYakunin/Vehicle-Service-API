@@ -1,83 +1,78 @@
 package com.vehicle_service_spring_v2.transports;
 
-import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.routes.RouteRepoI;
+import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Tram;
 import com.vehicle_service_spring_v2.transports.model.Transport;
+import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
+import com.vehicle_service_spring_v2.transports.model.dto.TransportDtoMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class TransportServiceImpl implements TransportServiceI {
     private final TransportRepoI transportRepo;
     private final RouteRepoI routeRepo;
-
-    @Autowired
-    public TransportServiceImpl(TransportRepoI transportRepo, RouteRepoI routeRepo) {
-        this.transportRepo = transportRepo;
-        this.routeRepo = routeRepo;
-    }
+    private final TransportDtoMapper transportDtoMapper;
 
     @Override
     public Transport addTransport(TransportDto transportDto) {
-        if (transportDto.getDriverQualificationEnum().equalsIgnoreCase("bus")) {
-            Bus bus = (Bus) TransportDtoHandler.mappingDtoToTransportMethodAdd(transportDto);
-            log.info("Bus was added to db " + bus);
-
-            return transportRepo.save(bus);
-        } else {
-            Tram tram = (Tram) TransportDtoHandler.mappingDtoToTransportMethodAdd(transportDto);
-            log.info("Tram was added to db " + tram);
-
-            return transportRepo.save(tram);
+        switch (transportDto.getDriverQualificationEnum().toLowerCase()) {
+            case "bus" -> {
+                Bus bus = (Bus) transportDtoMapper.toTransport(transportDto);
+                log.info("Bus was added to db " + bus);
+                return transportRepo.save(bus);
+            }
+            case "tram" -> {
+                Tram tram = (Tram) transportDtoMapper.toTransport(transportDto);
+                log.info("Tram was added to db " + tram);
+                return transportRepo.save(tram);
+            }
+            default ->
+                    throw new RuntimeException("Unsupported transport type: " + transportDto.getDriverQualificationEnum());
         }
     }
 
     @Override
-    public Optional<Transport> findTransportById(Long id) {
-        Optional<Transport> foundTransport = transportRepo.findById(id);
-
-        if (foundTransport.isEmpty()) {
-            log.warn("Error, transport with id = " + id + " not found");
-            return Optional.empty();
-        }
-
-        return foundTransport;
+    public Transport findTransportById(Long id) {
+        return transportRepo.findById(id)
+                .filter(x -> transportRepo.existsById(id))
+                .orElseThrow(
+                        () -> new RuntimeException("Transport with id=" + id + " not found !")
+                );
     }
 
     @Override
     public Transport updateTransport(TransportDto transportDto) {
-        Optional<Transport> foundTransport = transportRepo.findById(transportDto.getId());
-
-        Bus bus;
-        Tram tram;
-
-        if (transportDto.getDriverQualificationEnum().equalsIgnoreCase("bus")) {
-            bus = (Bus) TransportDtoHandler.mappingDtoToTransportMethodUpdate(transportDto, foundTransport);
-            return transportRepo.save(bus);
-        } else {
-            tram = (Tram) TransportDtoHandler.mappingDtoToTransportMethodUpdate(transportDto, foundTransport);
-            return transportRepo.save(tram);
+        switch (transportDto.getDriverQualificationEnum().toLowerCase()) {
+            case "bus" -> {
+                Bus bus = (Bus) transportDtoMapper.toTransport(transportDto);
+                return transportRepo.save(bus);
+            }
+            case "tram" -> {
+                Tram tram = (Tram) transportDtoMapper.toTransport(transportDto);
+                return transportRepo.save(tram);
+            }
+            default -> throw new RuntimeException("Unsupported transport type");
         }
     }
 
     @Override
     public boolean deleteTransportById(Long id) {
-        Optional<Transport> foundTransport = transportRepo.findById(id);
+        Transport foundTransport = transportRepo.findById(id).orElseThrow(
+                () -> new RuntimeException("Error, transport with id = " + id + " not found")
+        );
 
-        if (foundTransport.isEmpty()) {
-            log.warn("Error, transport with id = " + id + " not found");
-            return false;
-        }
+        boolean isEmpty = foundTransport.getDrivers().isEmpty();
 
-        if (!foundTransport.get().getDrivers().isEmpty()) {
-            log.warn("This transport can`t be deleted, transport has the driver = " + foundTransport.get());
+        if (!isEmpty) {
+            log.warn("This transport can`t be deleted, transport has the driver = " + foundTransport);
             return false;
         }
 
@@ -103,36 +98,49 @@ public class TransportServiceImpl implements TransportServiceI {
 
     @Override
     public boolean addTransportToRoute(long transportId, long routeId) {
-        Optional<Route> route = routeRepo.findById(routeId);
-        Optional<Transport> transport = transportRepo.findById(transportId);
+        Route route = routeRepo.findById(routeId).orElseThrow(
+                () -> new RuntimeException("Route with id=" + routeId + " not found !")
+        );
 
-        if (transport.isEmpty() || route.isEmpty()) {
-            log.warn("Transport or route cannot be null");
-            return false;
-        }
+        Transport transport = transportRepo.findById(transportId).orElseThrow(
+                () -> new RuntimeException("Transport with id=" + transportId + " not found !")
+        );
 
-        transport.get().getRoute().add(route.get());
-
-        TransportDto transportDto = TransportDtoHandler.createTransportDto(transport.get());
-        updateTransport(transportDto);
+        transport.getRoute().add(route);
+        updateTransport(transport);
 
         log.info("Route was update " + route);
         return true;
     }
 
+    private void updateTransport(Transport transport) {
+        switch (transport.getDriverQualificationEnum()) {
+            case BUS_DRIVER -> {
+                Bus bus = (Bus) transport;
+                TransportDto transportDto = transportDtoMapper.toDto(bus);
+                updateTransport(transportDto);
+            }
+            case TRAM_DRIVER -> {
+                Tram tram = (Tram) transport;
+                TransportDto transportDtoTram = transportDtoMapper.toDto(tram);
+                updateTransport(transportDtoTram);
+            }
+            default -> throw new RuntimeException("Something went wrong !");
+        }
+    }
+
     @Override
     public boolean removeTransportFromRoute(long transportId, long routeId) {
-        Optional<Route> route = routeRepo.findById(routeId);
-        Optional<Transport> transport = transportRepo.findById(transportId);
+        Route route = routeRepo.findById(routeId).orElseThrow(
+                () -> new RuntimeException("Route with id=" + routeId + " not found !")
+        );
 
-        if (transport.isEmpty() || route.isEmpty()) {
-            log.warn("Transport or route cannot be null");
-            return false;
-        }
+        Transport transport = transportRepo.findById(transportId).orElseThrow(
+                () -> new RuntimeException("Transport with id=" + transportId + " not found !")
+        );
 
-        transport.get().getRoute().remove(route.get());
-        TransportDto transportDto = TransportDtoHandler.createTransportDto(transport.get());
-        updateTransport(transportDto);
+        transport.getRoute().remove(route);
+        updateTransport(transport);
 
         log.info("Transport was removed from route");
         return true;

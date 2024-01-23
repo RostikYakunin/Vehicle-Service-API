@@ -12,7 +12,7 @@ public interface RouteServiceI {
 
     Route addRoute(RouteDto routeDto);
 
-    Optional<Route> findRouteById(Long id);
+    Route findRouteById(Long id);
 
     Route updateRoute(RouteDto routeDto);
 

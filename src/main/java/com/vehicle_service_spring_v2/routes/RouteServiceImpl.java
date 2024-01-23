@@ -6,7 +6,6 @@ import com.vehicle_service_spring_v2.routes.model.dto.RouteDto;
 import com.vehicle_service_spring_v2.routes.model.dto.RouteDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,19 +27,16 @@ public class RouteServiceImpl implements RouteServiceI {
     }
 
     @Override
-    public Optional<Route> findRouteById(Long id) {
-        if (routeRepo.findById(id).isEmpty()) {
-            log.warn("Route with id = " + id + " not found");
-            return Optional.empty();
-        }
-
-        return routeRepo.findById(id);
+    public Route findRouteById(Long id) {
+        return routeRepo.findById(id)
+                .filter(x -> routeRepo.existsById(id))
+                .orElseThrow(
+                        () -> new RuntimeException("Route with id=" + id + " not found !")
+                );
     }
 
     @Override
     public Route updateRoute(RouteDto routeDto) {
-        Optional<Route> foundRoute = routeRepo.findById(routeDto.getId());
-
         Route updatedRoute = routeDtoMapper.routeDtoToRoute(routeDto);
         log.info("Route updated successful");
 
@@ -49,20 +45,18 @@ public class RouteServiceImpl implements RouteServiceI {
 
     @Override
     public boolean deleteRouteById(Long id) {
-        Optional<Route> foundRoute = routeRepo.findById(id);
+        Route foundRoute = routeRepo.findById(id).orElseThrow(
+                () -> new RuntimeException("Route with id= " + id + " not found")
+        );
 
-        if (foundRoute.isEmpty()) {
-            log.warn("Route with id= " + id + " not found");
-            return false;
-        }
-
-        if (!foundRoute.get().getTransports().isEmpty()) {
-            log.warn("This route cannot be deleted, route has assigned transport: " + foundRoute.get());
+        boolean isEmpty = foundRoute.getTransports().isEmpty();
+        if (!isEmpty) {
+            log.warn("This route cannot be deleted, route has assigned transport: " + foundRoute);
             return false;
         }
 
         log.info("Route with id" + id + " was deleted");
-        routeRepo.delete(foundRoute.get());
+        routeRepo.delete(foundRoute);
         return true;
     }
 
