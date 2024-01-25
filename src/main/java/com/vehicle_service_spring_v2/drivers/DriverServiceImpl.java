@@ -44,12 +44,8 @@ public class DriverServiceImpl implements DriverServiceI {
     @Override
     public Driver findDriverById(Long id) {
         return driverRepo.findById(id)
-                .filter(x -> driverRepo.existsById(id))
                 .orElseThrow(
-                        () -> {
-                            log.warn("Error, driver with id = " + id + " not found");
-                            throw new RuntimeException("Driver with id=" + id + " not found !");
-                        }
+                        () -> new RuntimeException("Driver with id=" + id + " not found !")
                 );
     }
 

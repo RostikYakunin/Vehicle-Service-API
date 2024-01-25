@@ -1,22 +1,19 @@
 package com.vehicle_service_spring_v2.drivers;
 
+import com.vehicle_service_spring_v2.UnitTestBase;
 import com.vehicle_service_spring_v2.drivers.model.Driver;
-import com.vehicle_service_spring_v2.drivers.model.DriverQualificationEnum;
 import com.vehicle_service_spring_v2.drivers.model.dto.DriverDto;
-import com.vehicle_service_spring_v2.routes.RouteRepoI;
-import com.vehicle_service_spring_v2.routes.model.Route;
-import com.vehicle_service_spring_v2.transports.TransportDto;
-import com.vehicle_service_spring_v2.transports.TransportRepoI;
 import com.vehicle_service_spring_v2.transports.TransportServiceImpl;
 import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Transport;
+import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mock;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,314 +24,282 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-class DriverServiceImplTest {
-    @Autowired
+class DriverServiceImplTest extends UnitTestBase {
     DriverServiceImpl driverService;
-    @MockBean
-    DriverRepoI driverRepo;
-    @MockBean
-    TransportRepoI transportRepo;
-    @MockBean
+    @Mock
     TransportServiceImpl transportService;
-    @MockBean
-    RouteRepoI routeRepo;
-    @Captor
-    ArgumentCaptor<Long> longArgumentCaptor;
     @Captor
     ArgumentCaptor<Driver> driverArgumentCaptor;
     @Captor
-    ArgumentCaptor<String> stringArgumentCaptor;
+    ArgumentCaptor<DriverDto> driverDtoArgumentCaptor;
     @Captor
     ArgumentCaptor<TransportDto> transportDtoArgumentCaptor;
 
-    DriverDto testDriverDto;
-    Driver testDriver;
-    Route testRoute;
-
     @BeforeEach
     void setUp() {
-        Bus bus = new Bus();
-        bus.setId(1L);
+        super.configure();
+        driverService = new DriverServiceImpl(mockedDriverRepo, mockedTransportRepo, mockedRouteRepo, transportService, mockedDriverDtoMapper, mockedTransportDtoMapper);
+    }
 
-        Route route = new Route();
-        route.setId(1L);
-
-        testDriver = Driver.builder()
-                .id(1L)
-                .nameOfDriver("testName")
-                .surnameOfDriver("testSurname")
-                .phoneNumber("testPhone")
-                .qualificationEnum(DriverQualificationEnum.BUS_DRIVER)
-                .build();
-        testDriver.getTransport().add(bus);
-        testDriver.getRoute().add(route);
-
-        testDriverDto = DriverDto.builder()
-                .id(1L)
-                .nameOfDriver("testName")
-                .surnameOfDriver("testSurname")
-                .phoneNumber("testPhone")
-                .qualificationEnum("BUS")
-                .build();
-
-        testRoute = Route.builder()
-                .id(1L)
-                .startOfWay("testStart")
-                .endOfWay("testEnd")
-                .build();
+    @AfterEach
+    void turnDown() {
+        super.destroy();
+        driverService = null;
     }
 
     @Test
+    @DisplayName("Should add driver with input driver dto and return driver")
     void addDriver_inputDriverDtoReturnDriver() {
         //given
+        when(mockedDriverRepo.save(any(Driver.class))).thenReturn(testDriver);
+        when(mockedDriverDtoMapper.toDriver(any(DriverDto.class))).thenReturn(testDriver);
 
         //when
-        when(driverRepo.save(any(Driver.class))).thenReturn(testDriver);
+        Driver actualDriver = driverService.addDriver(testDriverDto);
 
         //then
-        Driver actualDriver = driverService.addDriver(testDriverDto);
-        assertEquals(testDriver, actualDriver);
+        verify(mockedDriverRepo, times(1)).save(driverArgumentCaptor.capture());
+        verify(mockedDriverDtoMapper, times(1)).toDriver(driverDtoArgumentCaptor.capture());
 
-        verify(driverRepo, times(1)).save(driverArgumentCaptor.capture());
+        assertEquals(testDriver, actualDriver);
     }
 
     @Test
+    @DisplayName("Should find driver by id with input long and return driver")
     void findDriverById_inputLongReturnOptionalOfDriver() {
         //given
+        when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
 
         //when
-        when(driverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
+        Driver actualDriver = driverService.findDriverById(1L);
 
         //then
-        Optional<Driver> actualDriver = driverService.findDriverById(1L);
-        assertEquals(Optional.of(testDriver), actualDriver);
+        verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
 
-        verify(driverRepo, times(2)).findById(longArgumentCaptor.capture());
+        assertEquals(testDriver, actualDriver);
     }
 
     @Test
+    @DisplayName("Should throw exception when finding driver by id with input long and return Optional empty")
     void findDriverById_inputLongReturnOptionalEmpty() {
         //given
+        when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         //when
-        when(driverRepo.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(
+                RuntimeException.class,
+                () -> driverService.findDriverById(1L),
+                "Driver with id=" + 1 + " not found !"
+        );
 
         //then
-        Optional<Driver> actualDriver = driverService.findDriverById(1L);
-        assertEquals(Optional.empty(), actualDriver);
-
-        verify(driverRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
     }
 
     @Test
+    @DisplayName("Should update driver with input driver dto and return driver")
     void updateDriver_inputDriverDtoReturnDriver() {
         //given
+        when(mockedDriverRepo.save(any(Driver.class))).thenReturn(testDriver);
+        when(mockedDriverDtoMapper.toDriver(any(DriverDto.class))).thenReturn(testDriver);
 
         //when
-        when(driverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
-        when(driverRepo.save(any(Driver.class))).thenReturn(testDriver);
+        Driver actualDriver = driverService.updateDriver(testDriverDto);
 
         //then
-        Driver actualDriver = driverService.updateDriver(testDriverDto);
-        assertEquals(testDriver, actualDriver);
+        verify(mockedDriverRepo, times(1)).save(driverArgumentCaptor.capture());
+        verify(mockedDriverDtoMapper, times(1)).toDriver(driverDtoArgumentCaptor.capture());
 
-        verify(driverRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(driverRepo, times(1)).save(driverArgumentCaptor.capture());
+        assertEquals(testDriver, actualDriver);
     }
 
     @Test
+    @DisplayName("Should delete driver by id with input long and return true")
     void deleteDriverById_inputLongReturnTrue() {
         //given
         testDriver.getTransport().clear();
+        when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
 
         //when
-        when(driverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
+        boolean actualResult = driverService.deleteDriverById(1L);
 
         //then
-        boolean actualResult = driverService.deleteDriverById(1L);
+        verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedDriverRepo, times(1)).deleteById(longArgumentCaptor.capture());
+
         assertTrue(actualResult);
 
-        verify(driverRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(driverRepo, times(1)).deleteById(longArgumentCaptor.capture());
     }
 
     @Test
-    void deleteDriverById_inputEmptyReturnFalse() {
+    @DisplayName("Should throw Exception when deleting driver by id with input long")
+    void deleteDriverById_inputEmptyThrowException() {
         //given
+        when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         //when
-        when(driverRepo.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(
+                RuntimeException.class,
+                () -> driverService.deleteDriverById(1L),
+                "Error, driver with id = " + 1 + " not found"
+        );
 
         //then
-        boolean actualResult = driverService.deleteDriverById(1L);
-        assertFalse(actualResult);
-
-        verify(driverRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(driverRepo, times(0)).deleteById(longArgumentCaptor.capture());
+        verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedDriverRepo, never()).deleteById(longArgumentCaptor.capture());
     }
 
     @Test
+    @DisplayName("Should not delete driver by id with input driver with non-empty transports and return False")
     void deleteDriverById_inputDriverWithNotEmptyDrivers_returnFalse() {
         //given
+        when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
 
         //when
-        when(driverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
+        boolean actualResult = driverService.deleteDriverById(1L);
 
         //then
-        boolean actualResult = driverService.deleteDriverById(1L);
-        assertFalse(actualResult);
+        verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedDriverRepo, never()).deleteById(longArgumentCaptor.capture());
 
-        verify(driverRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(driverRepo, times(0)).deleteById(longArgumentCaptor.capture());
+        assertFalse(actualResult);
     }
 
     @Test
+    @DisplayName("Should add driver on transport with input two long and return true")
     void addDriverOnTransport_inputTwoLongAndReturnTrue() {
         //given
-        Bus testTransport = Bus.builder()
-                .amountOfDoors(3)
-                .type("testType")
-                .build();
-        testTransport.setId(1L);
-        testTransport.setBrandOfTransport("testBrand");
-        testTransport.setDriverQualificationEnum(DriverQualificationEnum.BUS_DRIVER);
+        when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
+        when(transportService.updateTransport(any(TransportDto.class))).thenReturn(testBus);
 
         //when
-        when(driverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.of(testTransport));
-        when(transportService.updateTransport(any(TransportDto.class))).thenReturn(new Bus());
+        boolean actualResult = driverService.addDriverOnTransport(1L, 1L);
 
         //then
-        boolean actualResult = driverService.addDriverOnTransport(1L, 1L);
-        assertTrue(actualResult);
-
-        verify(driverRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
         verify(transportService, times(1)).updateTransport(transportDtoArgumentCaptor.capture());
+
+        assertTrue(actualResult);
     }
 
     @Test
+    @DisplayName("Should throw Exception when add driver on transport with input empty driver")
     void addDriverOnTransport_inputEmptyDriverAndReturnFalse() {
         //given
-        Bus testTransport = Bus.builder()
-                .amountOfDoors(3)
-                .type("testType")
-                .build();
-        testTransport.setId(1L);
-        testTransport.setBrandOfTransport("testBrand");
-        testTransport.setDriverQualificationEnum(DriverQualificationEnum.BUS_DRIVER);
-
-        //when
-        when(driverRepo.findById(anyLong())).thenReturn(Optional.empty());
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.of(testTransport));
+        when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.empty());
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
         when(transportService.updateTransport(any(TransportDto.class))).thenReturn(new Bus());
 
-        //then
-        boolean actualResult = driverService.addDriverOnTransport(1L, 1L);
-        assertFalse(actualResult);
+        //when
+        assertThrows(
+                RuntimeException.class,
+                () -> driverService.addDriverOnTransport(1L, 1L),
+                "Driver with id=" + 1 + " not found !"
+        );
 
-        verify(driverRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportService, times(0)).updateTransport(transportDtoArgumentCaptor.capture());
+        //then
+        verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, never()).findById(longArgumentCaptor.capture());
+        verify(transportService, never()).updateTransport(transportDtoArgumentCaptor.capture());
     }
 
     @Test
+    @DisplayName("Should throw Exception when add driver on transport with input empty transport")
     void addDriverOnTransport_inputEmptyTransportAndReturnFalse() {
         //given
-
-        //when
-        when(driverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.empty());
+        when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.empty());
         when(transportService.updateTransport(any(TransportDto.class))).thenReturn(new Bus());
 
-        //then
-        boolean actualResult = driverService.addDriverOnTransport(1L, 1L);
-        assertFalse(actualResult);
+        //when
+        assertThrows(
+                RuntimeException.class,
+                () -> driverService.addDriverOnTransport(1L, 1L),
+                "Transport with id=" + 1 + " not found !"
+        );
 
-        verify(driverRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportService, times(0)).updateTransport(transportDtoArgumentCaptor.capture());
+        //then
+        verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(transportService, never()).updateTransport(transportDtoArgumentCaptor.capture());
     }
 
     @Test
+    @DisplayName("Should find all drivers by surname with input nothing and return list of drivers by surname")
     void findAllDriverBySurname_inputNothingAndReturnListOfDriversBySurname() {
         //given
+        when(mockedDriverRepo.findDriversBySurname(anyString())).thenReturn(List.of(testDriver));
 
         //when
-        when(driverRepo.findDriversBySurname(anyString())).thenReturn(List.of(testDriver));
+        List<Driver> actualList = driverService.findAllDriverBySurname("testSurname");
 
         //then
-        List<Driver> actualList = driverService.findAllDriverBySurname("testSurname");
-        assertEquals(List.of(testDriver), actualList);
+        verify(mockedDriverRepo, times(1)).findDriversBySurname(stringArgumentCaptor.capture());
 
-        verify(driverRepo, times(1)).findDriversBySurname(stringArgumentCaptor.capture());
+        assertEquals(List.of(testDriver), actualList);
     }
 
     @Test
+    @DisplayName("Should find all drivers on route with input number of route and return list of drivers")
     void findAllDriverOnRoute_inputNumberOfRouteAndReturnListOfDrivers() {
         //given
         testDriver.getRoute().clear();
         testDriver.getTransport().clear();
-
-        testRoute.getDrivers().add(testDriver);
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
 
         //when
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
+        Set<Driver> actualList = driverService.findAllDriverOnRoute(1L);
 
         //then
-        Set<Driver> actualList = driverService.findAllDriverOnRoute(1L);
-        assertEquals(Set.of(testDriver).size(), actualList.size());
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
 
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
+        assertEquals(Set.of(testDriver).size(), actualList.size());
     }
 
     @Test
+    @DisplayName("Should find all drivers on route with input empty route and return empty set")
     void findAllDriverOnRoute_inputEmptyRouteAndReturnEmptySet() {
         //given
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         //when
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.empty());
+        Set<Driver> actualList = driverService.findAllDriverOnRoute(1L);
 
         //then
-        Set<Driver> actualList = driverService.findAllDriverOnRoute(1L);
-        assertEquals(Collections.emptySet(), actualList);
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
 
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
+        assertEquals(Collections.emptySet(), actualList);
     }
 
     @Test
+    @DisplayName("Should find all transports without driver with input nothing and return list of transports without driver")
     void findAllTransportsWithoutDriver() {
         //given
-        Bus testTransport = Bus.builder()
-                .amountOfDoors(3)
-                .type("testType")
-                .build();
-        testTransport.setId(1L);
-        testTransport.setBrandOfTransport("testBrand");
-        testTransport.setDriverQualificationEnum(DriverQualificationEnum.BUS_DRIVER);
+        when(mockedTransportRepo.findTransportWithoutDriver()).thenReturn(List.of(testBus));
 
         //when
-        when(transportRepo.findTransportWithoutDriver()).thenReturn(List.of(testTransport));
+        List<Transport> actualList = driverService.findAllTransportsWithoutDriver();
 
         //then
-        List<Transport> actualList = driverService.findAllTransportsWithoutDriver();
-        assertEquals(List.of(testTransport).size(), actualList.size());
+        verify(mockedTransportRepo, times(1)).findTransportWithoutDriver();
 
-        verify(transportRepo, times(1)).findTransportWithoutDriver();
+        assertEquals(List.of(testBus).size(), actualList.size());
     }
 
     @Test
+    @DisplayName("Should find all drivers with input nothing and return list of drivers")
     void findAllDrivers_inputNothingAndReturnListOfDrivers() {
         //given
+        when(mockedDriverRepo.findAll()).thenReturn(List.of(testDriver));
 
         //when
-        when(driverRepo.findAll()).thenReturn(List.of(testDriver));
+        List<Driver> actualList = driverService.findAllDrivers();
 
         //then
-        List<Driver> actualList = driverService.findAllDrivers();
-        assertEquals(List.of(testDriver), actualList);
+        verify(mockedDriverRepo, times(1)).findAll();
 
-        verify(driverRepo, times(1)).findAll();
+        assertEquals(List.of(testDriver), actualList);
     }
 }

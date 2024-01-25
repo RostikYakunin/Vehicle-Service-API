@@ -68,12 +68,12 @@ public abstract class UnitTestBase {
                 .surnameOfDriver("testSurname")
                 .phoneNumber("testPhone")
                 .qualificationEnum(DriverQualificationEnum.BUS_DRIVER)
-                .route(Set.of(Route.builder()
+                .route(new HashSet<>(Set.of(Route.builder()
                         .id(1L)
-                        .build()))
-                .transport(Set.of(Bus.builder()
+                        .build())))
+                .transport(new HashSet<>(Set.of(Bus.builder()
                         .id(1L)
-                        .build()))
+                        .build())))
                 .build();
 
         testRoute = Route.builder()
