@@ -36,11 +36,13 @@ public class RouteResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<RouteView> findRouteById(@PathVariable long id) {
-        return routeService.findRouteById(id)
-                .map(r -> ResponseEntity.ok(viewMapperUtil.mapRouteToView(r)))
-                .orElseThrow(
-                        () -> new RuntimeException("Route with id=" + id + " not found")
-                );
+        return ResponseEntity.ok(
+                Stream.of(routeService.findRouteById(id))
+                        .map(viewMapperUtil::mapRouteToView)
+                        .findFirst()
+                        .orElseThrow(
+                                () -> new RuntimeException("Route with id=" + id + " not found")
+                        ));
     }
 
     @PutMapping

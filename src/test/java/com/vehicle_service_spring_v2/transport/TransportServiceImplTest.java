@@ -1,22 +1,14 @@
 package com.vehicle_service_spring_v2.transport;
 
-import com.vehicle_service_spring_v2.drivers.model.Driver;
-import com.vehicle_service_spring_v2.drivers.model.DriverQualificationEnum;
-import com.vehicle_service_spring_v2.routes.RouteRepoI;
-import com.vehicle_service_spring_v2.routes.model.Route;
-import com.vehicle_service_spring_v2.transports.TransportDto;
-import com.vehicle_service_spring_v2.transports.TransportRepoI;
+import com.vehicle_service_spring_v2.UnitTestBase;
 import com.vehicle_service_spring_v2.transports.TransportServiceImpl;
 import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Tram;
 import com.vehicle_service_spring_v2.transports.model.Transport;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
+import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,352 +18,323 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-class TransportServiceImplTest {
-    @Autowired
+class TransportServiceImplTest extends UnitTestBase {
     TransportServiceImpl transportService;
-    @MockBean
-    TransportRepoI transportRepo;
-    @MockBean
-    RouteRepoI routeRepo;
-
-    @Captor
-    ArgumentCaptor<Long> longArgumentCaptor;
-    @Captor
-    ArgumentCaptor<String> stringArgumentCaptor;
     @Captor
     ArgumentCaptor<Transport> transportArgumentCaptor;
-
-    Bus testBus;
-    Tram testTram;
-    TransportDto testBusDto;
-    TransportDto testTramDto;
-    Route route;
+    @Captor
+    ArgumentCaptor<TransportDto> transportDtoArgumentCaptor;
 
     @BeforeEach
     void setUp() {
-        Route route = new Route(1L);
-        Driver driver = new Driver(1L);
+        super.configure();
+        transportService = new TransportServiceImpl(mockedTransportRepo, mockedRouteRepo, mockedTransportDtoMapper);
+    }
 
-        testBus = Bus.builder()
-                .type("testType")
-                .amountOfDoors(3)
-                .build();
-        testBus.setId(1L);
-        testBus.setBrandOfTransport("testBus");
-        testBus.setDriverQualificationEnum(DriverQualificationEnum.BUS_DRIVER);
-        testBus.setAmountOfPassengers(30);
-        testBus.getDrivers().add(new Driver(1L));
-        testBus.getRoute().add(new Route(1L));
-        testBus.getDrivers().add(driver);
-        testBus.getRoute().add(route);
-
-        testTram = Tram.builder()
-                .amountOfRailcar(4)
-                .build();
-        testBus.setId(1L);
-        testBus.setBrandOfTransport("testTram");
-        testBus.setDriverQualificationEnum(DriverQualificationEnum.TRAM_DRIVER);
-        testBus.setAmountOfPassengers(40);
-        testTram.getDrivers().add(new Driver(1L));
-        testTram.getRoute().add(new Route(1L));
-        testTram.getDrivers().add(driver);
-        testTram.getRoute().add(route);
-
-        testBusDto = TransportDto.builder()
-                .id(1L)
-                .amountOfDoors(3)
-                .amountOfPassengers(30)
-                .brandOfTransport("testBus")
-                .type("testType")
-                .driverQualificationEnum("bus")
-                .build();
-        testBusDto.getDrivers().add(driver);
-        testBusDto.getRoutes().add(route);
-
-        testTramDto = TransportDto.builder()
-                .id(1L)
-                .amountOfPassengers(40)
-                .brandOfTransport("testTram")
-                .type("testType")
-                .driverQualificationEnum("tram")
-                .amountOfRailcar(4)
-                .build();
-        testTramDto.getDrivers().add(driver);
-        testTramDto.getRoutes().add(route);
-
-        this.route = Route.builder()
-                .id(1L)
-                .startOfWay("testStart")
-                .endOfWay("testEnd")
-                .build();
+    @AfterEach
+    void turnDown() {
+        super.destroy();
     }
 
     @Test
+    @DisplayName("Should add transportDto with bus and return bus")
     void addTransport_inputBusDtoReturnBus() {
         //given
+        when(mockedTransportRepo.save(any(Transport.class))).thenReturn(testBus);
+        when(mockedTransportDtoMapper.toTransport(any(TransportDto.class))).thenReturn(testBus);
 
         //when
-        when(transportRepo.save(any(Transport.class))).thenReturn(testBus);
+        Bus actualBus = (Bus) transportService.addTransport(testBusDto);
 
         //then
-        Bus actualBus = (Bus) transportService.addTransport(testBusDto);
-        assertEquals(testBus, actualBus);
+        verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
+        verify(mockedTransportDtoMapper, times(1)).toTransport(transportDtoArgumentCaptor.capture());
 
-        verify(transportRepo, times(1)).save(transportArgumentCaptor.capture());
+        assertEquals(testBus, actualBus);
     }
 
     @Test
+    @DisplayName("Should add transportDto with tram and return tram")
     void addTransport_inputTramDtoReturnTram() {
         //given
+        when(mockedTransportRepo.save(any(Transport.class))).thenReturn(testTram);
+        when(mockedTransportDtoMapper.toTransport(any(TransportDto.class))).thenReturn(testTram);
 
         //when
-        when(transportRepo.save(any(Transport.class))).thenReturn(testTram);
+        Tram actualTram = (Tram) transportService.addTransport(testTramDto);
 
         //then
-        Tram actualTram = (Tram) transportService.addTransport(testTramDto);
-        assertEquals(testTram, actualTram);
+        verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
+        verify(mockedTransportDtoMapper, times(1)).toTransport(transportDtoArgumentCaptor.capture());
 
-        verify(transportRepo, times(1)).save(transportArgumentCaptor.capture());
+        assertEquals(testTram, actualTram);
     }
 
     @Test
+    @DisplayName("Should find transport by id and return Optional of bus")
     void findTransportById_inputLongReturnOptionalOfBus() {
         //given
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
+        when(mockedTransportRepo.existsById(anyLong())).thenReturn(true);
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
+        Transport actualTransport = transportService.findTransportById(1L);
 
         //then
-        Optional<Transport> actualTransport = transportService.findTransportById(1L);
-        assertEquals(Optional.of(testBus), actualTransport);
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).existsById(longArgumentCaptor.capture());
 
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
+        assertEquals(testBus, actualTransport);
     }
 
     @Test
+    @DisplayName("Should find transport by id and return Optional of tram")
     void findTransportById_inputLongReturnOptionalOfTram() {
         //given
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testTram));
+        when(mockedTransportRepo.existsById(anyLong())).thenReturn(true);
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.of(testTram));
+        Transport actualTransport = transportService.findTransportById(1L);
 
         //then
-        Optional<Transport> actualTransport = transportService.findTransportById(1L);
-        assertEquals(Optional.of(testTram), actualTransport);
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).existsById(longArgumentCaptor.capture());
 
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
+        assertEquals(testTram, actualTransport);
     }
 
     @Test
+    @DisplayName("Should throw RuntimeException when finding transport by id with empty result")
     void findTransportById_inputEmptyReturnOptionalEmpty() {
         //given
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(
+                RuntimeException.class,
+                () -> transportService.findTransportById(1L),
+                "Transport with id=" + 1 + " not found !"
+        );
 
         //then
-        Optional<Transport> actualTransport = transportService.findTransportById(1L);
-        assertEquals(Optional.empty(), actualTransport);
-
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
     }
 
     @Test
+    @DisplayName("Should update transport with busDto and return updated bus")
     void updateTransport_inputBusDtoReturnBus() {
         //given
+        when(mockedTransportRepo.save(any(Transport.class))).thenReturn(testBus);
+        when(mockedTransportDtoMapper.toTransport(any(TransportDto.class))).thenReturn(testBus);
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
-        when(transportRepo.save(any(Transport.class))).thenReturn(testBus);
+        Bus actualBus = (Bus) transportService.updateTransport(testBusDto);
 
         //then
-        Bus actualBus = (Bus) transportService.updateTransport(testBusDto);
-        assertEquals(testBus, actualBus);
+        verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
+        verify(mockedTransportDtoMapper, times(1)).toTransport(transportDtoArgumentCaptor.capture());
 
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(1)).save(transportArgumentCaptor.capture());
+        assertEquals(testBus, actualBus);
     }
 
     @Test
+    @DisplayName("Should update transport with tramDto and return updated tram")
     void updateTransport_inputTramDtoReturnTram() {
         //given
+        when(mockedTransportRepo.save(any(Transport.class))).thenReturn(testTram);
+        when(mockedTransportDtoMapper.toTransport(any(TransportDto.class))).thenReturn(testTram);
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.of(testTram));
-        when(transportRepo.save(any(Transport.class))).thenReturn(testTram);
+        Tram actualTram = (Tram) transportService.updateTransport(testTramDto);
 
         //then
-        Tram actualTram = (Tram) transportService.updateTransport(testTramDto);
-        assertEquals(testTram, actualTram);
+        verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
+        verify(mockedTransportDtoMapper, times(1)).toTransport(transportDtoArgumentCaptor.capture());
 
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(1)).save(transportArgumentCaptor.capture());
+        assertEquals(testTram, actualTram);
     }
 
     @Test
+    @DisplayName("Should delete transport by id with input long and return true")
     void deleteTransportById_inputLongAndReturnTrue() {
         //given
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
+        doNothing().when(mockedTransportRepo).deleteById(anyLong());
         testBus.getDrivers().clear();
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
+        boolean actualResult = transportService.deleteTransportById(1L);
 
         //then
-        boolean actualResult = transportService.deleteTransportById(1L);
-        assertTrue(actualResult);
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).deleteById(longArgumentCaptor.capture());
 
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(1)).deleteById(longArgumentCaptor.capture());
+        assertTrue(actualResult);
     }
 
     @Test
-    void deleteTransportById_inputEmptyTransportAndReturnFalse() {
+    @DisplayName("Should throw exception when deleting empty transport by id")
+    void deleteTransportById_inputEmptyTransport() {
         //given
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(
+                RuntimeException.class,
+                () -> transportService.deleteTransportById(1L),
+                "Error, transport with id = " + 1 + " not found"
+        );
 
         //then
-        boolean actualResult = transportService.deleteTransportById(1L);
-        assertFalse(actualResult);
-
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(0)).deleteById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, never()).deleteById(longArgumentCaptor.capture());
     }
 
     @Test
+    @DisplayName("Should not delete transport by id with non-empty drivers and return false")
     void deleteTransportById_inputTransportWithNotEmptyDriversAndReturnFalse() {
         //given
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
+        boolean actualResult = transportService.deleteTransportById(1L);
 
         //then
-        boolean actualResult = transportService.deleteTransportById(1L);
-        assertFalse(actualResult);
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, never()).deleteById(longArgumentCaptor.capture());
 
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(0)).deleteById(longArgumentCaptor.capture());
+        assertFalse(actualResult);
     }
 
     @Test
+    @DisplayName("Should find all exist transports")
     void findAllTransports() {
         //given
+        when(mockedTransportRepo.findAll()).thenReturn(List.of(testBus));
 
         //when
-        when(transportRepo.findAll()).thenReturn(List.of(testBus));
-
-        //then
         List<Transport> actualList = transportService.findAllTransports();
-        assertEquals(List.of(testBus), actualList);
-
-        verify(transportRepo, times(1)).findAll();
-    }
-
-    @Test
-    void findTransportByBrand_inputNothingAndReturnListOfTransportsByBrand() {
-        //given
-
-        //when
-        when(transportRepo.findTransportByBrand(anyString())).thenReturn(List.of(testBus));
 
         //then
-        List<Transport> actualList = transportService.findTransportByBrand("testBus");
-        assertEquals(List.of(testBus).size(), actualList.size());
+        verify(mockedTransportRepo, times(1)).findAll();
 
-        verify(transportRepo, times(1)).findTransportByBrand(stringArgumentCaptor.capture());
+        assertEquals(List.of(testBus), actualList);
     }
 
     @Test
-    void findTransportWithoutDriver_inputNothingAndReturnListOfTransportsWithoutDriver() {
+    @DisplayName("Should find transports by brand and return list of transports")
+    void findTransportByBrand_ReturnListOfTransportsByBrand() {
+        //given
+        when(mockedTransportRepo.findTransportByBrand(anyString())).thenReturn(List.of(testBus));
+
+        //when
+        List<Transport> actualList = transportService.findTransportByBrand("testBus");
+
+        //then
+        verify(mockedTransportRepo, times(1)).findTransportByBrand(stringArgumentCaptor.capture());
+
+        assertEquals(List.of(testBus).size(), actualList.size());
+    }
+
+    @Test
+    @DisplayName("Should find transports without drivers and return list of transports")
+    void findTransportWithoutDriver_ReturnListOfTransportsWithoutDriver() {
         //given
         testBus.getDrivers().clear();
+        when(mockedTransportRepo.findTransportWithoutDriver()).thenReturn(List.of(testBus));
 
         //when
-        when(transportRepo.findTransportWithoutDriver()).thenReturn(List.of(testBus));
+        List<Transport> actualList = transportService.findTransportWithoutDriver();
 
         //then
-        List<Transport> actualList = transportService.findTransportWithoutDriver();
+        verify(mockedTransportRepo, times(1)).findTransportWithoutDriver();
+
         assertEquals(List.of(testBus).size(), actualList.size());
         assertEquals(Collections.emptySet(), actualList.get(0).getDrivers());
-
-        verify(transportRepo, times(1)).findTransportWithoutDriver();
     }
 
     @Test
+    @DisplayName("Should add transport to route and return true")
     void addTransportToRoute_inputTransportAndRouteReturnTrue() {
         //given
-        Route testRoute = route;
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
+        when(mockedTransportRepo.save(any(Transport.class))).thenReturn(testBus);
+        when(mockedTransportDtoMapper.toDto(any(Transport.class))).thenReturn(testBusDto);
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
-        when(transportRepo.save(any(Transport.class))).thenReturn(testBus);
+        boolean actualResult = transportService.addTransportToRoute(1L, 1L);
 
         //then
-        boolean actualResult = transportService.addTransportToRoute(1L, 1L);
-        assertTrue(actualResult);
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
+        verify(mockedTransportDtoMapper, times(1)).toDto(transportArgumentCaptor.capture());
 
-        verify(transportRepo, times(2)).findById(longArgumentCaptor.capture());
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(1)).save(transportArgumentCaptor.capture());
+        assertTrue(actualResult);
     }
 
     @Test
+    @DisplayName("Should not add empty transport to route and return false")
     void addTransportToRoute_inputEmptyTransportReturnFalse() {
         //given
-        Route testRoute = route;
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.empty());
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
+        when(mockedTransportRepo.save(any(Transport.class))).thenReturn(testBus);
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.empty());
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
-        when(transportRepo.save(any(Transport.class))).thenReturn(testBus);
+        assertThrows(
+                RuntimeException.class,
+                () -> transportService.addTransportToRoute(1L, 1L),
+                "Transport with id=" + 1 + " not found !"
+        );
 
         //then
-        boolean actualResult = transportService.addTransportToRoute(1L, 1L);
-        assertFalse(actualResult);
-
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(0)).save(transportArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, never()).save(transportArgumentCaptor.capture());
     }
 
     @Test
+    @DisplayName("Should remove transport from route and return true")
     void removeTransportFromRoute_inputTransportAndRouteReturnTrue() {
         //given
-        Route testRoute = route;
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
+        when(mockedTransportRepo.save(any(Transport.class))).thenReturn(testBus);
+        when(mockedTransportDtoMapper.toDto(any(Transport.class))).thenReturn(testBusDto);
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
-        when(transportRepo.save(any(Transport.class))).thenReturn(testBus);
+        boolean actualResult = transportService.removeTransportFromRoute(1L, 1L);
 
         //then
-        boolean actualResult = transportService.removeTransportFromRoute(1L, 1L);
-        assertTrue(actualResult);
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
+        verify(mockedTransportDtoMapper, times(1)).toDto(transportArgumentCaptor.capture());
 
-        verify(transportRepo, times(2)).findById(longArgumentCaptor.capture());
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(1)).save(transportArgumentCaptor.capture());
+        assertTrue(actualResult);
     }
 
     @Test
+    @DisplayName("Should not remove empty transport from route and return false")
     void removeTransportFromRoute_inputEmptyTransportReturnFalse() {
         //given
-        Route testRoute = route;
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.empty());
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
+        when(mockedTransportRepo.save(any(Transport.class))).thenReturn(testBus);
 
         //when
-        when(transportRepo.findById(anyLong())).thenReturn(Optional.empty());
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
-        when(transportRepo.save(any(Transport.class))).thenReturn(testBus);
+        assertThrows(
+                RuntimeException.class,
+                () -> transportService.removeTransportFromRoute(1L, 1L),
+                "Transport with id=" + 1 + " not found !"
+        );
 
         //then
-        boolean actualResult = transportService.removeTransportFromRoute(1L, 1L);
-        assertFalse(actualResult);
-
-        verify(transportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportRepo, times(0)).save(transportArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, never()).save(transportArgumentCaptor.capture());
     }
 }

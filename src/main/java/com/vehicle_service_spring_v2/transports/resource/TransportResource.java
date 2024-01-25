@@ -34,9 +34,11 @@ public class TransportResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<TransportView> findTransportById(@PathVariable long id) {
-        return transportService.findTransportById(id)
-                .map(transport -> ResponseEntity.ok(viewMapperUtil.mapTransportToView(transport)))
-                .orElseThrow(() -> new RuntimeException("Transport with " + id + " not found"));
+        return ResponseEntity.ok(
+                Stream.of(transportService.findTransportById(id))
+                        .map(viewMapperUtil::mapTransportToView)
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Transport with " + id + " not found")));
     }
 
     @PutMapping

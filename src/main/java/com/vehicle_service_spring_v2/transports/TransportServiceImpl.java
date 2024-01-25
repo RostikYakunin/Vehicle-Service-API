@@ -34,8 +34,7 @@ public class TransportServiceImpl implements TransportServiceI {
                 log.info("Tram was added to db " + tram);
                 return transportRepo.save(tram);
             }
-            default ->
-                    throw new RuntimeException("Unsupported transport type: " + transportDto.getDriverQualificationEnum());
+            default -> throw new RuntimeException("Unsupported transport type: " + transportDto.getDriverQualificationEnum());
         }
     }
 

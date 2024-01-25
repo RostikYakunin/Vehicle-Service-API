@@ -36,18 +36,19 @@ public class DriverResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<DriverView> findDriverById(@PathVariable long id) {
-        return driverService.findDriverById(id)
-                .map(r -> ResponseEntity.ok(viewMapperUtil.mapDriverToView(r)))
-                .orElseThrow(
-                        () -> new RuntimeException("Driver with id=" + id + " not found")
-                );
+        return ResponseEntity.ok(
+                Stream.of(driverService.findDriverById(id))
+                        .map(viewMapperUtil::mapDriverToView)
+                        .findFirst()
+                        .orElseThrow(
+                                () -> new RuntimeException("Driver with id=" + id + " not found")
+                        ));
     }
 
     @PutMapping
     public ResponseEntity<DriverView> updateDriver(@RequestBody @Valid DriverDto driverDto) {
         return ResponseEntity.ok(
-                Stream.of(
-                                driverService.updateDriver(driverDto))
+                Stream.of(driverService.updateDriver(driverDto))
                         .map(viewMapperUtil::mapDriverToView)
                         .findFirst()
                         .orElseThrow(
