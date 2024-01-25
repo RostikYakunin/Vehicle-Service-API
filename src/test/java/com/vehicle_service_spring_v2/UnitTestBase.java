@@ -80,12 +80,12 @@ public abstract class UnitTestBase {
                 .id(1L)
                 .startOfWay("testStart")
                 .endOfWay("testEnd")
-                .transports(Set.of(Bus.builder()
+                .transports(new HashSet<>(Set.of(Bus.builder()
                         .id(1L)
-                        .build()))
-                .drivers(Set.of(Driver.builder()
+                        .build())))
+                .drivers(new HashSet<>(Set.of(Driver.builder()
                         .id(1L)
-                        .build()))
+                        .build())))
                 .build();
 
         testBus = Bus.builder()

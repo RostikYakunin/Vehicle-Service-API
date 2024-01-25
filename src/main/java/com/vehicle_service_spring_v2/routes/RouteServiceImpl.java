@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -20,7 +19,7 @@ public class RouteServiceImpl implements RouteServiceI {
 
     @Override
     public Route addRoute(RouteDto routeDto) {
-        Route route = routeDtoMapper.routeDtoToRoute(routeDto);
+        Route route = routeDtoMapper.toRoute(routeDto);
         log.info("New route was added to db: " + route);
 
         return routeRepo.save(route);
@@ -29,7 +28,6 @@ public class RouteServiceImpl implements RouteServiceI {
     @Override
     public Route findRouteById(Long id) {
         return routeRepo.findById(id)
-                .filter(x -> routeRepo.existsById(id))
                 .orElseThrow(
                         () -> new RuntimeException("Route with id=" + id + " not found !")
                 );
@@ -37,7 +35,7 @@ public class RouteServiceImpl implements RouteServiceI {
 
     @Override
     public Route updateRoute(RouteDto routeDto) {
-        Route updatedRoute = routeDtoMapper.routeDtoToRoute(routeDto);
+        Route updatedRoute = routeDtoMapper.toRoute(routeDto);
         log.info("Route updated successful");
 
         return routeRepo.save(updatedRoute);

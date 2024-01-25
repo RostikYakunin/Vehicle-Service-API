@@ -5,6 +5,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface RouteDtoMapper {
-    Route routeDtoToRoute(RouteDto routeDto);
-    RouteDto routeToDto (Route route);
+    Route toRoute(RouteDto routeDto);
+    RouteDto toDto(Route route);
 }

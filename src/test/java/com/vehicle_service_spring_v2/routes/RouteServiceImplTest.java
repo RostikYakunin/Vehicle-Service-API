@@ -1,16 +1,14 @@
 package com.vehicle_service_spring_v2.routes;
 
-import com.vehicle_service_spring_v2.drivers.model.Driver;
+import com.vehicle_service_spring_v2.UnitTestBase;
 import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.routes.model.dto.RouteDto;
-import com.vehicle_service_spring_v2.transports.model.Bus;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,175 +17,172 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-class RouteServiceImplTest {
-    @MockBean
-    RouteRepoI routeRepo;
-    @Autowired
-    RouteServiceImpl routeService;
+class RouteServiceImplTest extends UnitTestBase {
+    RouteServiceI routeService;
     @Captor
     ArgumentCaptor<Route> routeArgumentCaptor;
     @Captor
-    ArgumentCaptor<Long> longArgumentCaptor;
-
-    RouteDto testRouteDto;
-    Route testRoute;
+    ArgumentCaptor<RouteDto> routeDtoArgumentCaptor;
 
     @BeforeEach
     void setUp() {
-        testRoute = Route.builder()
-                .id(1L)
-                .startOfWay("testStart")
-                .endOfWay("testEnd")
-                .build();
+        super.configure();
+        routeService = new RouteServiceImpl(mockedRouteRepo, mockedRouteDtoMapper);
+    }
 
-        testRouteDto = RouteDto.builder()
-                .id(1L)
-                .startOfWay("testStart")
-                .endOfWay("testEnd")
-                .build();
-
-        Bus bus = new Bus();
-        bus.setId(1L);
-
-        Driver driver = new Driver();
-        driver.setId(1L);
-
-        testRouteDto.getTransports().add(bus);
-        testRouteDto.getDrivers().add(driver);
-
-        testRoute.getTransports().add(bus);
-        testRoute.getDrivers().add(driver);
+    @AfterEach
+    void turnDown() {
+        super.destroy();
+        routeService = null;
     }
 
     @Test
+    @DisplayName("Should add route with input route dto and return route")
     void addRoute_inputRouteDtoReturnsRoute() {
         //given
+        when(mockedRouteRepo.save(any(Route.class))).thenReturn(testRoute);
+        when(mockedRouteDtoMapper.toRoute(any(RouteDto.class))).thenReturn(testRoute);
 
         //when
-        when(routeRepo.save(any(Route.class))).thenReturn(testRoute);
-
-        //then
         Route actualRoute = routeService.addRoute(testRouteDto);
-        assertEquals(testRoute, actualRoute);
-        verify(routeRepo, times(1)).save(routeArgumentCaptor.capture());
-    }
-
-    @Test
-    void findRouteById_inputLongReturnOptionalOfRoute() {
-        //given
-
-        //when
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
 
         //then
-        Optional<Route> actualRoute = routeService.findRouteById(1L);
-        assertEquals(Optional.of(testRoute), actualRoute);
-        verify(routeRepo, times(2)).findById(longArgumentCaptor.capture());
+        verify(mockedRouteRepo, times(1)).save(routeArgumentCaptor.capture());
+        verify(mockedRouteDtoMapper, times(1)).toRoute(routeDtoArgumentCaptor.capture());
+
+        assertEquals(testRoute, actualRoute);
     }
 
     @Test
+    @DisplayName("Should find route by id with input long and return route")
+    void findRouteById_inputLongReturnRoute() {
+        //given
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
+
+        //when
+        Route actualRoute = routeService.findRouteById(1L);
+
+        //then
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
+
+        assertEquals(testRoute, actualRoute);
+    }
+
+    @Test
+    @DisplayName("Should throw exception when finding route by id with input null and return Optional empty")
     void findRouteById_inputNullReturnOptionalEmpty() {
         //given
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.empty());
+        when(mockedRouteRepo.save(any(Route.class))).thenReturn(testRoute);
 
         //when
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.empty());
-        when(routeRepo.save(any(Route.class))).thenReturn(testRoute);
+        assertThrows(
+                RuntimeException.class,
+                () -> routeService.findRouteById(1L),
+                "Route with id=" + 1 + " not found !"
+        );
 
         //then
-        assertEquals(Optional.empty(), routeService.findRouteById(1L));
-
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
     }
 
     @Test
+    @DisplayName("Should update route with input route dto and return route")
     void updateRoute_inputRouteDtoReturnRoute() {
         //given
+        when(mockedRouteDtoMapper.toRoute(testRouteDto)).thenReturn(testRoute);
+        when(mockedRouteRepo.save(any(Route.class))).thenReturn(testRoute);
 
         //when
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
-        when(routeRepo.save(any(Route.class))).thenReturn(testRoute);
+        Route actualRoute = routeService.updateRoute(testRouteDto);
 
         //then
-        Route actualRoute = routeService.updateRoute(testRouteDto);
-        assertEquals(testRoute, actualRoute);
+        verify(mockedRouteRepo, times(1)).save(routeArgumentCaptor.capture());
+        verify(mockedRouteDtoMapper, times(1)).toRoute(routeDtoArgumentCaptor.capture());
 
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(routeRepo, times(1)).save(routeArgumentCaptor.capture());
+        assertEquals(testRoute, actualRoute);
     }
 
     @Test
+    @DisplayName("Should delete route by id with input long and return true")
     void deleteRouteById_inputLongReturnTrue() {
         //given
         testRoute.getTransports().clear();
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
+        doNothing().when(mockedRouteRepo).deleteById(anyLong());
 
         //when
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
+        boolean actualResult = routeService.deleteRouteById(1L);
 
         //then
-        boolean actualResult = routeService.deleteRouteById(1L);
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedRouteRepo, times(1)).delete(routeArgumentCaptor.capture());
+
         assertTrue(actualResult);
-
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(routeRepo, times(1)).delete(routeArgumentCaptor.capture());
     }
 
     @Test
-    void deleteRouteById_inputNullReturnFalse() {
+    @DisplayName("Should throw exception when deleting route by id with input null and return false")
+    void deleteRouteById_inputNull_ThrowException() {
         //given
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         //when
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(
+                RuntimeException.class,
+                () -> routeService.deleteRouteById(1L),
+                "Route with id= " + 1 + " not found"
+        );
 
         //then
-        boolean actualResult = routeService.deleteRouteById(1L);
-        assertFalse(actualResult);
-
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(routeRepo, times(0)).delete(routeArgumentCaptor.capture());
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedRouteRepo, times(0)).delete(routeArgumentCaptor.capture());
     }
 
     @Test
+    @DisplayName("Should not delete route by id with input route with non-empty transports and return false")
     void deleteRouteById_inputRouteWithNotEmptyTransports_ReturnFalse() {
         //given
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
 
         //when
-        when(routeRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
+        boolean actualResult = routeService.deleteRouteById(1L);
 
         //then
-        boolean actualResult = routeService.deleteRouteById(1L);
-        assertFalse(actualResult);
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedRouteRepo, never()).delete(routeArgumentCaptor.capture());
 
-        verify(routeRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(routeRepo, times(0)).delete(routeArgumentCaptor.capture());
+        assertFalse(actualResult);
     }
 
     @Test
+    @DisplayName("Should find all routes and return list of routes")
     void findAllRoutes_inputNothingReturnListOfRoutes() {
         //given
+        when(mockedRouteRepo.findAll()).thenReturn(List.of(testRoute));
 
         //when
-        when(routeRepo.findAll()).thenReturn(List.of(testRoute));
+        List<Route> actualRoutes = routeService.findAllRoutes();
 
         //then
-        List<Route> actualRoutes = routeService.findAllRoutes();
-        assertEquals(List.of(testRoute), actualRoutes);
+        verify(mockedRouteRepo, times(1)).findAll();
 
-        verify(routeRepo, times(1)).findAll();
+        assertEquals(List.of(testRoute), actualRoutes);
     }
 
     @Test
+    @DisplayName("Should find all routes without transport and return list of routes without transports")
     void findAllRoutesWithoutTransport_inputNothingReturnListRoutesWithoutTransports() {
         //given
         testRoute.getTransports().clear();
+        when(mockedRouteRepo.findAllRoutesWithoutTransport()).thenReturn(List.of(testRoute));
 
         //when
-        when(routeRepo.findAllRoutesWithoutTransport()).thenReturn(List.of(testRoute));
+        List<Route> actualList = routeService.findAllRoutesWithoutTransport();
 
         //then
-        List<Route> actualList = routeService.findAllRoutesWithoutTransport();
-        assertEquals(List.of(testRoute), actualList);
+        verify(mockedRouteRepo, times(1)).findAllRoutesWithoutTransport();
 
-        verify(routeRepo, times(1)).findAllRoutesWithoutTransport();
+        assertEquals(List.of(testRoute), actualList);
     }
 }

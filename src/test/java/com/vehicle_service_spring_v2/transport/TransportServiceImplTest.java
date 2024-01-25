@@ -6,7 +6,10 @@ import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Tram;
 import com.vehicle_service_spring_v2.transports.model.Transport;
 import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
@@ -34,6 +37,7 @@ class TransportServiceImplTest extends UnitTestBase {
     @AfterEach
     void turnDown() {
         super.destroy();
+        transportService = null;
     }
 
     @Test

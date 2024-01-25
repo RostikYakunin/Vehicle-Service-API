@@ -28,7 +28,7 @@ class RouteDtoMapperTest {
                 .build();
 
         //When
-        Route actualResult = routeDtoMapper.routeDtoToRoute(routeDto);
+        Route actualResult = routeDtoMapper.toRoute(routeDto);
 
         //Then
         assertEquals(actualResult.getClass(), Route.class);
@@ -51,7 +51,7 @@ class RouteDtoMapperTest {
                 .build();
 
         //When
-        RouteDto actualResult = routeDtoMapper.routeToDto(route);
+        RouteDto actualResult = routeDtoMapper.toDto(route);
 
         //Then
         assertEquals(actualResult.getClass(), RouteDto.class);
