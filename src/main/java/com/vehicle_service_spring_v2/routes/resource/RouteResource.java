@@ -26,7 +26,7 @@ public class RouteResource {
     public ResponseEntity<RouteView> createRoute(@RequestBody @Valid RouteDto routeDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 Stream.of(routeService.addRoute(routeDto))
-                        .map(viewMapperUtil::mapRouteToView)
+                        .map(viewMapperUtil::toRoadView)
                         .findFirst()
                         .orElseThrow(
                                 () -> new RuntimeException("Something went wrong !")
@@ -38,7 +38,7 @@ public class RouteResource {
     public ResponseEntity<RouteView> findRouteById(@PathVariable long id) {
         return ResponseEntity.ok(
                 Stream.of(routeService.findRouteById(id))
-                        .map(viewMapperUtil::mapRouteToView)
+                        .map(viewMapperUtil::toRoadView)
                         .findFirst()
                         .orElseThrow(
                                 () -> new RuntimeException("Route with id=" + id + " not found")
@@ -49,7 +49,7 @@ public class RouteResource {
     public ResponseEntity<RouteView> updateRoute(@RequestBody @Valid RouteDto routeDto) {
         return ResponseEntity.ok(
                 Stream.of(routeService.updateRoute(routeDto))
-                        .map(viewMapperUtil::mapRouteToView)
+                        .map(viewMapperUtil::toRoadView)
                         .findFirst()
                         .orElseThrow(
                                 () -> new RuntimeException("Something went wrong !")
@@ -70,7 +70,7 @@ public class RouteResource {
     public ResponseEntity<List<RouteView>> findAllRoutes() {
         return ResponseEntity.ok(
                 routeService.findAllRoutes().stream()
-                        .map(viewMapperUtil::mapRouteToView)
+                        .map(viewMapperUtil::toRoadView)
                         .collect(Collectors.toList())
         );
     }
@@ -79,7 +79,7 @@ public class RouteResource {
     public ResponseEntity<List<RouteView>> findAllRoutesWithoutTransport() {
         return ResponseEntity.ok(
                 routeService.findAllRoutesWithoutTransport().stream()
-                        .map(viewMapperUtil::mapRouteToView)
+                        .map(viewMapperUtil::toRoadView)
                         .collect(Collectors.toList())
         );
     }
