@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${PGPORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+security:
+  jwt:
+    secret-key: ${SECRET_KEY}
+    expiration-time: ${EXP_TIME}
+
+logging:
+  level:
+    root: info
+    sql: debug
+    org:
+      springframework:
+        web: debug
+
+  file:
+    name: ${LOG_PATH}
+
+server:
+  port: ${SERVER_PORT}
