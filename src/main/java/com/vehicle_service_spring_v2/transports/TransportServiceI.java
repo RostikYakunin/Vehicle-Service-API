@@ -5,7 +5,6 @@ import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public interface TransportServiceI {
