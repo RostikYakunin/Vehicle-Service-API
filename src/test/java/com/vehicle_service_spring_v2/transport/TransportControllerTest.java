@@ -127,7 +127,7 @@ class TransportControllerTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Creating a new transport should return a JSON object with 201 Created status")
     void post_createTransport_returnsObjWith201_Created() throws Exception {
         //given
         when(transportService.addTransport(any(TransportDto.class))).thenReturn(transportTest);
@@ -165,7 +165,7 @@ class TransportControllerTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Retrieving a transport by ID should return a JSON object with 200 OK status")
     void get_findTransportById_returnsObjWith200_Ok() throws Exception {
         //given
         when(transportService.findTransportById(anyLong())).thenReturn(transportTest);
@@ -201,7 +201,7 @@ class TransportControllerTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Updating a transport should return a JSON object with 200 OK status")
     void put_updateTransport_returnsObjWith200_Ok() throws Exception {
         //given
         when(transportService.updateTransport(any(TransportDto.class))).thenReturn(transportTest);
@@ -239,7 +239,7 @@ class TransportControllerTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Deleting a transport by ID should return 200 OK status")
     void delete_deleteTransportById_returnsNothingWith200_Ok() throws Exception {
         //given
         when(transportService.deleteTransportById(anyLong())).thenReturn(true);
@@ -257,7 +257,7 @@ class TransportControllerTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Retrieving all transports should return a list with 200 OK status")
     void get_findAllTransports_returnsListWith200_Ok() throws Exception {
         //given
         when(transportService.findAllTransports()).thenReturn(List.of(transportTest));
@@ -293,7 +293,7 @@ class TransportControllerTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Retrieving transports by brand should return a list with 200 OK status")
     void get_findTransportByBrand_returnsListWith200_Ok() throws Exception {
         //given
         when(transportService.findTransportByBrand(anyString())).thenReturn(List.of(transportTest));
@@ -330,7 +330,7 @@ class TransportControllerTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Retrieving transports without drivers should return a list with 200 OK status")
     void get_findTransportWithoutDriver_returnsListWith200_Ok() throws Exception {
         //given
         when(viewMapperUtil.toTransportView(any(Transport.class))).thenReturn(transportViewTest);
@@ -366,7 +366,7 @@ class TransportControllerTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Adding a transport to a route should return nothing with 200 OK status")
     void put_addTransportToRoute_returnsNothingWith200_Ok() throws Exception {
         //given
         when(transportService.addTransportToRoute(anyLong(), anyLong())).thenReturn(true);
@@ -384,7 +384,7 @@ class TransportControllerTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Removing a transport from a route should return nothing with 200 OK status")
     void delete_removeTransportFromRoute_returnsNothingWith200_Ok() throws Exception {
         //given
         when(transportService.removeTransportFromRoute(anyLong(), anyLong())).thenReturn(true);
