@@ -7,6 +7,8 @@ import com.vehicle_service_spring_v2.transports.model.dto.TransportView;
 import com.vehicle_service_spring_v2.utils.ViewMapperUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +26,9 @@ public class DriverResource {
 
     @PostMapping
     public ResponseEntity<DriverView> createDriver(@RequestBody @Valid DriverDto driverDto) {
-        return ResponseEntity.ok(
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 Stream.of(driverService.addDriver(driverDto))
-                        .map(viewMapperUtil::mapDriverToView)
+                        .map(viewMapperUtil::toDriverView)
                         .findFirst()
                         .orElseThrow(
                                 () -> new RuntimeException("Something went wrong !")
@@ -38,7 +40,7 @@ public class DriverResource {
     public ResponseEntity<DriverView> findDriverById(@PathVariable long id) {
         return ResponseEntity.ok(
                 Stream.of(driverService.findDriverById(id))
-                        .map(viewMapperUtil::mapDriverToView)
+                        .map(viewMapperUtil::toDriverView)
                         .findFirst()
                         .orElseThrow(
                                 () -> new RuntimeException("Driver with id=" + id + " not found")
@@ -49,7 +51,7 @@ public class DriverResource {
     public ResponseEntity<DriverView> updateDriver(@RequestBody @Valid DriverDto driverDto) {
         return ResponseEntity.ok(
                 Stream.of(driverService.updateDriver(driverDto))
-                        .map(viewMapperUtil::mapDriverToView)
+                        .map(viewMapperUtil::toDriverView)
                         .findFirst()
                         .orElseThrow(
                                 () -> new RuntimeException("Something went wrong !")
@@ -78,7 +80,7 @@ public class DriverResource {
     @GetMapping("/surname/{surname}")
     public ResponseEntity<List<DriverView>> findAllDriverBySurname(@PathVariable String surname) {
         return ResponseEntity.ok(driverService.findAllDriverBySurname(surname).stream()
-                .map(viewMapperUtil::mapDriverToView)
+                .map(viewMapperUtil::toDriverView)
                 .collect(Collectors.toList()));
     }
 
@@ -86,7 +88,7 @@ public class DriverResource {
     public ResponseEntity<Set<DriverView>> findAllDriverOnRoute(@PathVariable long id) {
         return ResponseEntity.ok(
                 driverService.findAllDriverOnRoute(id).stream()
-                        .map(viewMapperUtil::mapDriverToView)
+                        .map(viewMapperUtil::toDriverView)
                         .collect(Collectors.toSet())
         );
     }
@@ -95,7 +97,7 @@ public class DriverResource {
     public ResponseEntity<List<TransportView>> findAllTransportsWithoutDriver() {
         return ResponseEntity.ok(
                 driverService.findAllTransportsWithoutDriver().stream()
-                        .map(viewMapperUtil::mapTransportToView)
+                        .map(viewMapperUtil::toTransportView)
                         .collect(Collectors.toList())
         );
     }
@@ -104,7 +106,7 @@ public class DriverResource {
     public ResponseEntity<List<DriverView>> findAllDrivers() {
         return ResponseEntity.ok(
                 driverService.findAllDrivers().stream()
-                        .map(viewMapperUtil::mapDriverToView)
+                        .map(viewMapperUtil::toDriverView)
                         .collect(Collectors.toList())
         );
     }
