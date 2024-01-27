@@ -24,7 +24,7 @@ public class TransportResource {
     public ResponseEntity<TransportView> createTransport(@RequestBody TransportDto transportDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 Stream.of(transportService.addTransport(transportDto))
-                        .map(viewMapperUtil::mapTransportToView)
+                        .map(viewMapperUtil::toTransportView)
                         .findFirst()
                         .orElseThrow(
                                 () -> new RuntimeException("Something went wrong !")
@@ -36,7 +36,7 @@ public class TransportResource {
     public ResponseEntity<TransportView> findTransportById(@PathVariable long id) {
         return ResponseEntity.ok(
                 Stream.of(transportService.findTransportById(id))
-                        .map(viewMapperUtil::mapTransportToView)
+                        .map(viewMapperUtil::toTransportView)
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Transport with " + id + " not found")));
     }
@@ -45,7 +45,7 @@ public class TransportResource {
     public ResponseEntity<TransportView> updateTransport(@RequestBody TransportDto transportDto) {
         return ResponseEntity.ok(
                 Stream.of(transportService.updateTransport(transportDto))
-                        .map(viewMapperUtil::mapTransportToView)
+                        .map(viewMapperUtil::toTransportView)
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Something went wrong!"))
         );
@@ -61,7 +61,7 @@ public class TransportResource {
     public ResponseEntity<List<TransportView>> findAllTransports() {
         return ResponseEntity.ok(
                 transportService.findAllTransports().stream()
-                        .map(viewMapperUtil::mapTransportToView)
+                        .map(viewMapperUtil::toTransportView)
                         .collect(Collectors.toList())
         );
     }
@@ -70,7 +70,7 @@ public class TransportResource {
     public ResponseEntity<List<TransportView>> findTransportByBrand(@PathVariable String brand) {
         return ResponseEntity.ok(
                 transportService.findTransportByBrand(brand).stream()
-                        .map(viewMapperUtil::mapTransportToView)
+                        .map(viewMapperUtil::toTransportView)
                         .collect(Collectors.toList())
         );
     }
@@ -79,7 +79,7 @@ public class TransportResource {
     public ResponseEntity<List<TransportView>> findTransportWithoutDriver() {
         return ResponseEntity.ok(
                 transportService.findTransportWithoutDriver().stream()
-                        .map(viewMapperUtil::mapTransportToView)
+                        .map(viewMapperUtil::toTransportView)
                         .collect(Collectors.toList())
         );
     }
