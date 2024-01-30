@@ -209,7 +209,7 @@ class TransportControllerTest {
 
         //when
         mockMvc.perform(
-                        put("/api/transports")
+                        put("/api/transports/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(transportDtoTest))
                                 .with(SecurityMockMvcRequestPostProcessors.csrf()))

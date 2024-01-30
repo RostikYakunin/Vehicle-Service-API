@@ -41,7 +41,6 @@ public class TransportServiceImpl implements TransportServiceI {
     @Override
     public Transport findTransportById(Long id) {
         return transportRepo.findById(id)
-                .filter(x -> transportRepo.existsById(id))
                 .orElseThrow(
                         () -> new RuntimeException("Transport with id=" + id + " not found !")
                 );

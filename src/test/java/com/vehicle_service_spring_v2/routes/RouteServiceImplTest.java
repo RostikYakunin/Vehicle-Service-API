@@ -90,15 +90,17 @@ class RouteServiceImplTest extends UnitTestBase {
     @DisplayName("Should update route with input route dto and return route")
     void updateRoute_inputRouteDtoReturnRoute() {
         //given
-        when(mockedRouteDtoMapper.toRoute(testRouteDto)).thenReturn(testRoute);
+        when(mockedRouteDtoMapper.updateRoute(testRoute, testRouteDto)).thenReturn(testRoute);
         when(mockedRouteRepo.save(any(Route.class))).thenReturn(testRoute);
+        when(mockedRouteRepo.findById(anyLong())).thenReturn(Optional.of(testRoute));
 
         //when
         Route actualRoute = routeService.updateRoute(1L, testRouteDto);
 
         //then
         verify(mockedRouteRepo, times(1)).save(routeArgumentCaptor.capture());
-        verify(mockedRouteDtoMapper, times(1)).toRoute(routeDtoArgumentCaptor.capture());
+        verify(mockedRouteDtoMapper, times(1)).updateRoute(routeArgumentCaptor.capture(), routeDtoArgumentCaptor.capture());
+        verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
 
         assertEquals(testRoute, actualRoute);
     }

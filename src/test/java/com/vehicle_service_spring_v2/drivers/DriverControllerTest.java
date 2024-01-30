@@ -223,7 +223,7 @@ class DriverControllerTest {
 
         //when
         mockMvc.perform(
-                        put("/api/drivers")
+                        put("/api/drivers/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(driverDtoTest))
                                 .with(SecurityMockMvcRequestPostProcessors.csrf()))

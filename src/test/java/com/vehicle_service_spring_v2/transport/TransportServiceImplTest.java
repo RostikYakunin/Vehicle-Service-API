@@ -79,14 +79,12 @@ class TransportServiceImplTest extends UnitTestBase {
     void findTransportById_inputLongReturnOptionalOfBus() {
         //given
         when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
-        when(mockedTransportRepo.existsById(anyLong())).thenReturn(true);
 
         //when
         Transport actualTransport = transportService.findTransportById(1L);
 
         //then
         verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(mockedTransportRepo, times(1)).existsById(longArgumentCaptor.capture());
 
         assertEquals(testBus, actualTransport);
     }
@@ -96,14 +94,12 @@ class TransportServiceImplTest extends UnitTestBase {
     void findTransportById_inputLongReturnOptionalOfTram() {
         //given
         when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testTram));
-        when(mockedTransportRepo.existsById(anyLong())).thenReturn(true);
 
         //when
         Transport actualTransport = transportService.findTransportById(1L);
 
         //then
         verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(mockedTransportRepo, times(1)).existsById(longArgumentCaptor.capture());
 
         assertEquals(testTram, actualTransport);
     }
@@ -130,14 +126,16 @@ class TransportServiceImplTest extends UnitTestBase {
     void updateTransport_inputBusDtoReturnBus() {
         //given
         when(mockedTransportRepo.save(any(Transport.class))).thenReturn(testBus);
-        when(mockedTransportDtoMapper.toTransport(any(TransportDto.class))).thenReturn(testBus);
+        when(mockedTransportDtoMapper.updateVehicle(any(Transport.class), any(TransportDto.class))).thenReturn(testBus);
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
 
         //when
         Bus actualBus = (Bus) transportService.updateTransport(1L, testBusDto);
 
         //then
         verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
-        verify(mockedTransportDtoMapper, times(1)).toTransport(transportDtoArgumentCaptor.capture());
+        verify(mockedTransportDtoMapper, times(1)).updateVehicle(transportArgumentCaptor.capture(), transportDtoArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
 
         assertEquals(testBus, actualBus);
     }
@@ -147,14 +145,16 @@ class TransportServiceImplTest extends UnitTestBase {
     void updateTransport_inputTramDtoReturnTram() {
         //given
         when(mockedTransportRepo.save(any(Transport.class))).thenReturn(testTram);
-        when(mockedTransportDtoMapper.toTransport(any(TransportDto.class))).thenReturn(testTram);
+        when(mockedTransportDtoMapper.updateVehicle(any(Transport.class), any(TransportDto.class))).thenReturn(testTram);
+        when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testTram));
 
         //when
         Tram actualTram = (Tram) transportService.updateTransport(1L, testTramDto);
 
         //then
         verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
-        verify(mockedTransportDtoMapper, times(1)).toTransport(transportDtoArgumentCaptor.capture());
+        verify(mockedTransportDtoMapper, times(1)).updateVehicle(transportArgumentCaptor.capture(), transportDtoArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
 
         assertEquals(testTram, actualTram);
     }
@@ -271,7 +271,7 @@ class TransportServiceImplTest extends UnitTestBase {
         boolean actualResult = transportService.addTransportToRoute(1L, 1L);
 
         //then
-        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(2)).findById(longArgumentCaptor.capture());
         verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
         verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
         verify(mockedTransportDtoMapper, times(1)).toDto(transportArgumentCaptor.capture());
@@ -313,7 +313,7 @@ class TransportServiceImplTest extends UnitTestBase {
         boolean actualResult = transportService.removeTransportFromRoute(1L, 1L);
 
         //then
-        verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
+        verify(mockedTransportRepo, times(2)).findById(longArgumentCaptor.capture());
         verify(mockedRouteRepo, times(1)).findById(longArgumentCaptor.capture());
         verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
         verify(mockedTransportDtoMapper, times(1)).toDto(transportArgumentCaptor.capture());

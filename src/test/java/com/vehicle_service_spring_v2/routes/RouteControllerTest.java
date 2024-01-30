@@ -186,7 +186,7 @@ class RouteControllerTest {
 
         //when
         mockMvc.perform(
-                        put("/api/routes")
+                        put("/api/routes/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(testRouteDto))
                                 .with(SecurityMockMvcRequestPostProcessors.csrf()))

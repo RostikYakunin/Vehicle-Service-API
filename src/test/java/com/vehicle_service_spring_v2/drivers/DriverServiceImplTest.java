@@ -101,14 +101,16 @@ class DriverServiceImplTest extends UnitTestBase {
     void updateDriver_inputDriverDtoReturnDriver() {
         //given
         when(mockedDriverRepo.save(any(Driver.class))).thenReturn(testDriver);
-        when(mockedDriverDtoMapper.toDriver(any(DriverDto.class))).thenReturn(testDriver);
+        when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
+        when(mockedDriverDtoMapper.updateDriver(any(Driver.class), any(DriverDto.class))).thenReturn(testDriver);
 
         //when
         Driver actualDriver = driverService.updateDriver(1L, testDriverDto);
 
         //then
         verify(mockedDriverRepo, times(1)).save(driverArgumentCaptor.capture());
-        verify(mockedDriverDtoMapper, times(1)).toDriver(driverDtoArgumentCaptor.capture());
+        verify(mockedDriverDtoMapper, times(1)).updateDriver(driverArgumentCaptor.capture(), driverDtoArgumentCaptor.capture());
+        verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
 
         assertEquals(testDriver, actualDriver);
     }
