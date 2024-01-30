@@ -2,7 +2,7 @@ package com.vehicle_service_spring_v2.transports.resource;
 
 import com.vehicle_service_spring_v2.transports.TransportServiceI;
 import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
-import com.vehicle_service_spring_v2.transports.model.dto.TransportView;
+import com.vehicle_service_spring_v2.transports.model.dto.view.TransportView;
 import com.vehicle_service_spring_v2.utils.ViewMapperUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

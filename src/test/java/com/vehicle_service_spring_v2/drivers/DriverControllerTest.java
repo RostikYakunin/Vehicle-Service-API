@@ -12,7 +12,7 @@ import com.vehicle_service_spring_v2.drivers.resouce.DriverResource;
 import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Transport;
-import com.vehicle_service_spring_v2.transports.model.dto.TransportView;
+import com.vehicle_service_spring_v2.transports.model.dto.view.TransportView;
 import com.vehicle_service_spring_v2.utils.ViewMapperUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -11,7 +11,7 @@ import com.vehicle_service_spring_v2.transports.TransportServiceI;
 import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Transport;
 import com.vehicle_service_spring_v2.transports.model.dto.TransportDto;
-import com.vehicle_service_spring_v2.transports.model.dto.TransportView;
+import com.vehicle_service_spring_v2.transports.model.dto.view.TransportView;
 import com.vehicle_service_spring_v2.transports.resource.TransportResource;
 import com.vehicle_service_spring_v2.utils.ViewMapperUtil;
 import org.junit.jupiter.api.AfterEach;

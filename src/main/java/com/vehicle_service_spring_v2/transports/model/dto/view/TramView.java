@@ -1,4 +1,4 @@
-package com.vehicle_service_spring_v2.transports.model.dto;
+package com.vehicle_service_spring_v2.transports.model.dto.view;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,13 +12,11 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransportView {
+public class TramView {
     private Long id;
     private String brandOfTransport;
     private Integer amountOfPassengers;
     private String driverQualificationEnum;
-    private String type;
-    private Integer amountOfDoors;
     private Integer amountOfRailcar;
     private Set<Long> routesId = new HashSet<>();
     private Set<Long> driversId = new HashSet<>();

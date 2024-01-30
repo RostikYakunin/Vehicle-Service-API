@@ -9,8 +9,8 @@ import com.vehicle_service_spring_v2.routes.model.dto.RouteViewMapper;
 import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Tram;
 import com.vehicle_service_spring_v2.transports.model.Transport;
-import com.vehicle_service_spring_v2.transports.model.dto.TransportView;
-import com.vehicle_service_spring_v2.transports.model.dto.TransportViewMapper;
+import com.vehicle_service_spring_v2.transports.model.dto.view.TransportView;
+import com.vehicle_service_spring_v2.transports.model.dto.view.TransportViewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

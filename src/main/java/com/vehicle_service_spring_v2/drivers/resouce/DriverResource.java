@@ -3,7 +3,7 @@ package com.vehicle_service_spring_v2.drivers.resouce;
 import com.vehicle_service_spring_v2.drivers.DriverServiceI;
 import com.vehicle_service_spring_v2.drivers.model.dto.DriverDto;
 import com.vehicle_service_spring_v2.drivers.model.dto.DriverView;
-import com.vehicle_service_spring_v2.transports.model.dto.TransportView;
+import com.vehicle_service_spring_v2.transports.model.dto.view.TransportView;
 import com.vehicle_service_spring_v2.utils.ViewMapperUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

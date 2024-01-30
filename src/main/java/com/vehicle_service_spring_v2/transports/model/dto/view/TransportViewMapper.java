@@ -1,9 +1,12 @@
-package com.vehicle_service_spring_v2.transports.model.dto;
+package com.vehicle_service_spring_v2.transports.model.dto.view;
 
 import com.vehicle_service_spring_v2.drivers.model.Driver;
 import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Tram;
+import com.vehicle_service_spring_v2.transports.model.dto.view.BusView;
+import com.vehicle_service_spring_v2.transports.model.dto.view.TramView;
+import com.vehicle_service_spring_v2.transports.model.dto.view.TransportView;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
