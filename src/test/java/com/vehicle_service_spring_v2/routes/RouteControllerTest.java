@@ -182,7 +182,7 @@ class RouteControllerTest {
     void put_updateRoute_returnsObjWith200_ok() throws Exception {
         //given
         when(viewMapperUtil.toRoadView(any(Route.class))).thenReturn(testRouteView);
-        when(routeService.updateRoute(any(RouteDto.class))).thenReturn(testRoute);
+        when(routeService.updateRoute(anyLong(),any(RouteDto.class))).thenReturn(testRoute);
 
         //when
         mockMvc.perform(
@@ -206,7 +206,7 @@ class RouteControllerTest {
                 .andExpect(jsonPath("$.driversId[0]").value(testRouteView.getDriversId().stream().findFirst().get()));
 
         //then
-        verify(routeService, times(1)).updateRoute(routeDtoArgumentCaptor.capture());
+        verify(routeService, times(1)).updateRoute(longArgumentCaptor.capture(), routeDtoArgumentCaptor.capture());
         verify(viewMapperUtil, times(1)).toRoadView(routeArgumentCaptor.capture());
     }
 

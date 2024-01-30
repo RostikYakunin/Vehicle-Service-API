@@ -94,7 +94,7 @@ class RouteServiceImplTest extends UnitTestBase {
         when(mockedRouteRepo.save(any(Route.class))).thenReturn(testRoute);
 
         //when
-        Route actualRoute = routeService.updateRoute(testRouteDto);
+        Route actualRoute = routeService.updateRoute(1L, testRouteDto);
 
         //then
         verify(mockedRouteRepo, times(1)).save(routeArgumentCaptor.capture());
