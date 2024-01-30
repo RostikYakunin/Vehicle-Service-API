@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -50,8 +51,9 @@ public class DriverServiceImpl implements DriverServiceI {
     }
 
     @Override
-    public Driver updateDriver(DriverDto driverDto) {
-        Driver upgradeDriver = driverDtoMapper.toDriver(driverDto);
+    public Driver updateDriver(Long id, DriverDto driverDto) {
+        Driver driverById = findDriverById(id);
+        Driver upgradeDriver = driverDtoMapper.updateDriver(driverById, driverDto);
         log.info("Driver successfully updated " + upgradeDriver);
 
         return driverRepo.save(upgradeDriver);

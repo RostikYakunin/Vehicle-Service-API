@@ -17,7 +17,7 @@ public interface DriverServiceI {
 
     Driver findDriverById(Long id);
 
-    Driver updateDriver(DriverDto driver);
+    Driver updateDriver(Long id, DriverDto driver);
 
     boolean deleteDriverById(Long id);
 
