@@ -48,14 +48,16 @@ public class TransportServiceImpl implements TransportServiceI {
     }
 
     @Override
-    public Transport updateTransport(TransportDto transportDto) {
+    public Transport updateTransport(Long id, TransportDto transportDto) {
+        Transport transportById = findTransportById(id);
+
         switch (transportDto.getDriverQualificationEnum().toLowerCase()) {
             case "bus" -> {
-                Bus bus = (Bus) transportDtoMapper.toTransport(transportDto);
+                Bus bus = (Bus) transportDtoMapper.updateVehicle(transportById, transportDto);
                 return transportRepo.save(bus);
             }
             case "tram" -> {
-                Tram tram = (Tram) transportDtoMapper.toTransport(transportDto);
+                Tram tram = (Tram) transportDtoMapper.updateVehicle(transportById, transportDto);
                 return transportRepo.save(tram);
             }
             default -> throw new RuntimeException("Unsupported transport type");
@@ -117,12 +119,12 @@ public class TransportServiceImpl implements TransportServiceI {
             case BUS_DRIVER -> {
                 Bus bus = (Bus) transport;
                 TransportDto transportDto = transportDtoMapper.toDto(bus);
-                updateTransport(transportDto);
+                updateTransport(transport.getId(), transportDto);
             }
             case TRAM_DRIVER -> {
                 Tram tram = (Tram) transport;
                 TransportDto transportDtoTram = transportDtoMapper.toDto(tram);
-                updateTransport(transportDtoTram);
+                updateTransport(transport.getId(), transportDtoTram);
             }
             default -> throw new RuntimeException("Something went wrong !");
         }

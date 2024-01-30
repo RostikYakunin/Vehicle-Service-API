@@ -89,7 +89,7 @@ public class DriverServiceImpl implements DriverServiceI {
         transport.getDrivers().add(driver);
         TransportDto transportDto = transportDtoMapper.toDto(transport);
 
-        transportService.updateTransport(transportDto);
+        transportService.updateTransport(transportId, transportDto);
         log.info("Driver: " + driver + " successful added to transport " + transport);
         return true;
     }

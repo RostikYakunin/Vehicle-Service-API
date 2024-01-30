@@ -80,4 +80,45 @@ class TransportDtoMapperTest {
         assertEquals(actual.getClass(), Tram.class);
         assertEquals(expected, actual);
     }
+
+    @Test
+    void updateVehicle() {
+        //Given
+        TransportDto testDto = TransportDto.builder()
+                .id(1L)
+                .brandOfTransport("changed")
+                .amountOfPassengers(2)
+                .driverQualificationEnum("TRAM")
+                .type("testType")
+                .amountOfDoors(null)
+                .amountOfRailcar(null)
+                .build();
+
+        Tram testTram = Tram.builder()
+                .id(1L)
+                .brandOfTransport("testBrand")
+                .amountOfPassengers(2)
+                .driverQualificationEnum(DriverQualificationEnum.TRAM_DRIVER)
+                .amountOfRailcar(2)
+                .drivers(Collections.emptySet())
+                .route(Collections.emptySet())
+                .build();
+
+        Tram expectedTram = Tram.builder()
+                .id(1L)
+                .brandOfTransport("changed")
+                .amountOfPassengers(2)
+                .driverQualificationEnum(DriverQualificationEnum.TRAM_DRIVER)
+                .amountOfRailcar(2)
+                .drivers(Collections.emptySet())
+                .route(Collections.emptySet())
+                .build();
+
+        //When
+        Tram actual = (Tram) transportDtoMapper.updateVehicle(testTram, testDto);
+
+        //Then
+        assertEquals(actual.getClass(), Tram.class);
+        assertEquals(testTram, actual);
+    }
 }

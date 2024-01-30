@@ -133,7 +133,7 @@ class TransportServiceImplTest extends UnitTestBase {
         when(mockedTransportDtoMapper.toTransport(any(TransportDto.class))).thenReturn(testBus);
 
         //when
-        Bus actualBus = (Bus) transportService.updateTransport(testBusDto);
+        Bus actualBus = (Bus) transportService.updateTransport(1L, testBusDto);
 
         //then
         verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
@@ -150,7 +150,7 @@ class TransportServiceImplTest extends UnitTestBase {
         when(mockedTransportDtoMapper.toTransport(any(TransportDto.class))).thenReturn(testTram);
 
         //when
-        Tram actualTram = (Tram) transportService.updateTransport(testTramDto);
+        Tram actualTram = (Tram) transportService.updateTransport(1L, testTramDto);
 
         //then
         verify(mockedTransportRepo, times(1)).save(transportArgumentCaptor.capture());
