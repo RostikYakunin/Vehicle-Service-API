@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST}:${PGPORT}/${POSTGRES_DB}
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -27,3 +27,7 @@ logging:
 
 server:
   port: ${SERVER_PORT}
+
+springdoc:
+  swagger-ui:
+    path: ${SWAGGER_PATH}

@@ -13,7 +13,7 @@ public interface TransportServiceI {
 
     Transport findTransportById(Long id);
 
-    Transport updateTransport(TransportDto transportDto);
+    Transport updateTransport(Long id, TransportDto transportDto);
 
     boolean deleteTransportById(Long id);
 

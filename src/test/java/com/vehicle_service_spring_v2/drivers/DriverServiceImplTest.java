@@ -101,14 +101,16 @@ class DriverServiceImplTest extends UnitTestBase {
     void updateDriver_inputDriverDtoReturnDriver() {
         //given
         when(mockedDriverRepo.save(any(Driver.class))).thenReturn(testDriver);
-        when(mockedDriverDtoMapper.toDriver(any(DriverDto.class))).thenReturn(testDriver);
+        when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
+        when(mockedDriverDtoMapper.updateDriver(any(Driver.class), any(DriverDto.class))).thenReturn(testDriver);
 
         //when
-        Driver actualDriver = driverService.updateDriver(testDriverDto);
+        Driver actualDriver = driverService.updateDriver(1L, testDriverDto);
 
         //then
         verify(mockedDriverRepo, times(1)).save(driverArgumentCaptor.capture());
-        verify(mockedDriverDtoMapper, times(1)).toDriver(driverDtoArgumentCaptor.capture());
+        verify(mockedDriverDtoMapper, times(1)).updateDriver(driverArgumentCaptor.capture(), driverDtoArgumentCaptor.capture());
+        verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
 
         assertEquals(testDriver, actualDriver);
     }
@@ -171,7 +173,7 @@ class DriverServiceImplTest extends UnitTestBase {
         //given
         when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
         when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
-        when(transportService.updateTransport(any(TransportDto.class))).thenReturn(testBus);
+        when(transportService.updateTransport(anyLong(),any(TransportDto.class))).thenReturn(testBus);
 
         //when
         boolean actualResult = driverService.addDriverOnTransport(1L, 1L);
@@ -179,7 +181,7 @@ class DriverServiceImplTest extends UnitTestBase {
         //then
         verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
         verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportService, times(1)).updateTransport(transportDtoArgumentCaptor.capture());
+        verify(transportService, times(1)).updateTransport(longArgumentCaptor.capture(), transportDtoArgumentCaptor.capture());
 
         assertTrue(actualResult);
     }
@@ -190,7 +192,7 @@ class DriverServiceImplTest extends UnitTestBase {
         //given
         when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.empty());
         when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.of(testBus));
-        when(transportService.updateTransport(any(TransportDto.class))).thenReturn(new Bus());
+        when(transportService.updateTransport(anyLong(), any(TransportDto.class))).thenReturn(new Bus());
 
         //when
         assertThrows(
@@ -202,7 +204,7 @@ class DriverServiceImplTest extends UnitTestBase {
         //then
         verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
         verify(mockedTransportRepo, never()).findById(longArgumentCaptor.capture());
-        verify(transportService, never()).updateTransport(transportDtoArgumentCaptor.capture());
+        verify(transportService, never()).updateTransport(longArgumentCaptor.capture(),transportDtoArgumentCaptor.capture());
     }
 
     @Test
@@ -211,7 +213,7 @@ class DriverServiceImplTest extends UnitTestBase {
         //given
         when(mockedDriverRepo.findById(anyLong())).thenReturn(Optional.of(testDriver));
         when(mockedTransportRepo.findById(anyLong())).thenReturn(Optional.empty());
-        when(transportService.updateTransport(any(TransportDto.class))).thenReturn(new Bus());
+        when(transportService.updateTransport(anyLong(), any(TransportDto.class))).thenReturn(new Bus());
 
         //when
         assertThrows(
@@ -223,7 +225,7 @@ class DriverServiceImplTest extends UnitTestBase {
         //then
         verify(mockedDriverRepo, times(1)).findById(longArgumentCaptor.capture());
         verify(mockedTransportRepo, times(1)).findById(longArgumentCaptor.capture());
-        verify(transportService, never()).updateTransport(transportDtoArgumentCaptor.capture());
+        verify(transportService, never()).updateTransport(longArgumentCaptor.capture(), transportDtoArgumentCaptor.capture());
     }
 
     @Test

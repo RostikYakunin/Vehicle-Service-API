@@ -13,7 +13,7 @@ public interface RouteServiceI {
 
     Route findRouteById(Long id);
 
-    Route updateRoute(RouteDto routeDto);
+    Route updateRoute(Long id, RouteDto routeDto);
 
     boolean deleteRouteById(Long id);
 

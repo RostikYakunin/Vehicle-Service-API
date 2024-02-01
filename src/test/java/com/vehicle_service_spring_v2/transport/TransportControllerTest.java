@@ -204,12 +204,12 @@ class TransportControllerTest {
     @DisplayName("Updating a transport should return a JSON object with 200 OK status")
     void put_updateTransport_returnsObjWith200_Ok() throws Exception {
         //given
-        when(transportService.updateTransport(any(TransportDto.class))).thenReturn(transportTest);
+        when(transportService.updateTransport(anyLong(), any(TransportDto.class))).thenReturn(transportTest);
         when(viewMapperUtil.toTransportView(any(Transport.class))).thenReturn(transportViewTest);
 
         //when
         mockMvc.perform(
-                        put("/api/transports")
+                        put("/api/transports/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(transportDtoTest))
                                 .with(SecurityMockMvcRequestPostProcessors.csrf()))
@@ -235,7 +235,7 @@ class TransportControllerTest {
 
         //then
         verify(viewMapperUtil, times(1)).toTransportView(transportArgumentCaptor.capture());
-        verify(transportService, times(1)).updateTransport(transportDtoArgumentCaptor.capture());
+        verify(transportService, times(1)).updateTransport(longArgumentCaptor.capture(),transportDtoArgumentCaptor.capture());
     }
 
     @Test

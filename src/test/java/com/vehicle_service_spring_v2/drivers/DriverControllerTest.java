@@ -218,12 +218,12 @@ class DriverControllerTest {
     @DisplayName("Updating a driver should return a JSON object with 200 OK status")
     void put_updateDriver_returnsObjWith200_Ok() throws Exception {
         //given
-        when(driverService.updateDriver(any(DriverDto.class))).thenReturn(driverBusTest);
+        when(driverService.updateDriver(anyLong(), any(DriverDto.class))).thenReturn(driverBusTest);
         when(viewMapperUtil.toDriverView(driverBusTest)).thenReturn(driverViewTest);
 
         //when
         mockMvc.perform(
-                        put("/api/drivers")
+                        put("/api/drivers/1")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(driverDtoTest))
                                 .with(SecurityMockMvcRequestPostProcessors.csrf()))
@@ -246,7 +246,7 @@ class DriverControllerTest {
                 .andExpect(jsonPath("$.routeId[0]").value(driverViewTest.getRouteId().stream().findFirst().get()));
 
         //then
-        verify(driverService, times(1)).updateDriver(driverDtoArgumentCaptor.capture());
+        verify(driverService, times(1)).updateDriver(id.capture(), driverDtoArgumentCaptor.capture());
         verify(viewMapperUtil, times(1)).toDriverView(driverArgumentCaptor.capture());
     }
 

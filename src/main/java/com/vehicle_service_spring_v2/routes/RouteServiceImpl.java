@@ -34,8 +34,9 @@ public class RouteServiceImpl implements RouteServiceI {
     }
 
     @Override
-    public Route updateRoute(RouteDto routeDto) {
-        Route updatedRoute = routeDtoMapper.toRoute(routeDto);
+    public Route updateRoute(Long id, RouteDto routeDto) {
+        Route routeById = findRouteById(id);
+        Route updatedRoute = routeDtoMapper.updateRoute(routeById, routeDto);
         log.info("Route updated successful");
 
         return routeRepo.save(updatedRoute);

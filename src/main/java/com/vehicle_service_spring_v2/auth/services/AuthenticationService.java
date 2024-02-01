@@ -5,6 +5,7 @@ import com.vehicle_service_spring_v2.auth.dto.UserRegisterDto;
 import com.vehicle_service_spring_v2.auth.users.User;
 import com.vehicle_service_spring_v2.auth.users.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -34,6 +36,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(input.getPassword()))
                 .build();
 
+        log.info("User is created" + user);
         return userRepository.save(user);
     }
 

@@ -59,4 +59,44 @@ public interface TransportDtoMapper {
 
     TransportDto toDtoFromTram(Tram tram);
 
+    default Transport updateVehicle(Transport transportById, TransportDto transportDto) {
+        if (transportDto.getAmountOfPassengers() != null) {
+            transportById.setAmountOfPassengers(transportDto.getAmountOfPassengers());
+        }
+
+        if (transportDto.getBrandOfTransport() != null) {
+            transportById.setBrandOfTransport(transportDto.getBrandOfTransport());
+        }
+
+        if (transportDto.getDriverQualificationEnum() != null) {
+            transportById.setDriverQualificationEnum(DriverQualificationEnum.valueOf(transportDto.getDriverQualificationEnum().toUpperCase() + "_DRIVER"));
+        }
+
+        if (transportById.getDriverQualificationEnum().equals(DriverQualificationEnum.BUS_DRIVER)) {
+            Bus bus = (Bus) transportById;
+            bus.setType(
+                    transportDto.getType() == null
+                            ? ((Bus) transportById).getType()
+                            : transportDto.getType()
+            );
+
+            bus.setAmountOfDoors(
+                    transportDto.getAmountOfDoors() == null
+                            ? ((Bus) transportById).getAmountOfDoors()
+                            : transportDto.getAmountOfDoors()
+            );
+
+            return bus;
+        } else {
+            Tram tram = (Tram) transportById;
+
+            tram.setAmountOfRailcar(
+                    transportDto.getAmountOfRailcar() == null
+                            ? ((Tram) transportById).getAmountOfRailcar()
+                            : transportDto.getAmountOfRailcar()
+            );
+
+            return tram;
+        }
+    }
 }

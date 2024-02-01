@@ -1,6 +1,7 @@
 package com.vehicle_service_spring_v2.routes.model.dto;
 
 import com.vehicle_service_spring_v2.routes.model.Route;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +14,7 @@ class RouteDtoMapperTest {
     RouteDtoMapper routeDtoMapper;
 
     @Test
+    @DisplayName("Mapping RouteDto to Route")
     void routeDtoToRoute() {
         //Given
         RouteDto routeDto = RouteDto.builder()
@@ -36,6 +38,7 @@ class RouteDtoMapperTest {
     }
 
     @Test
+    @DisplayName("Mapping Route to RouteDto")
     void routeToDto() {
         //Given
         Route route = Route.builder()
@@ -56,5 +59,33 @@ class RouteDtoMapperTest {
         //Then
         assertEquals(actualResult.getClass(), RouteDto.class);
         assertEquals(expectedRouteDto, actualResult);
+    }
+
+    @Test
+    @DisplayName("Updating Route using RouteDto should ignore null value")
+    void updateRoute() {
+        //Given
+        Route testRoute = Route.builder()
+                .id(1L)
+                .startOfWay("Start")
+                .endOfWay("End")
+                .build();
+
+        RouteDto testRouteDto = RouteDto.builder()
+                .startOfWay("Changed")
+                .endOfWay(null)
+                .build();
+
+        Route expectedRoute = Route.builder()
+                .id(1L)
+                .startOfWay("Changed")
+                .endOfWay("End")
+                .build();
+
+        //When
+        Route actualResult = routeDtoMapper.updateRoute(testRoute, testRouteDto);
+
+        //Then
+        assertEquals(expectedRoute, actualResult);
     }
 }
