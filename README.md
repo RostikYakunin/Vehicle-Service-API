@@ -1,4 +1,4 @@
-# README file in progress
+# README file in progress !!!
 
 ## Vehicle service
 This project represents "Vehicle service" is a Java application developed using the Spring Boot framework and
@@ -8,7 +8,7 @@ and Transport service.
 
 **Key Features**
 - *Authentication:* The project implements a robust authentication system, allowing users to log in securely.
-- 
+
 - *Security* The project is secured by jwt authorization, so if you want to use it you need a token
 
 - *Data Manipulation:* Users can do all CRUD operations with entities using appropriate endpoints.
@@ -52,48 +52,28 @@ and Transport service.
 > NOTE: Database saves it state between runs.
 
 ### Config
-All app configs are saved in `"src/main/resources/application.yaml"`
+- App configs are saved in `"src/main/resources/application.yaml"`
+- Environment variables are saved in `".env"`
 
-### Some examples
+### Authentication and Token Management
+This section describes how to register, authenticate, and refresh tokens in the app using the provided REST API endpoints.
 
+Open API schemes are available here: http://localhost:8080/swagger-ui/index.html
+
+### Examples
 #### 1. Register a new user using authentication
-To register a new user, make a POST request to the /api/v1/auth/ endpoint with a JSON payload containing the username, email, and password
+To register a new user, make a POST request to the /api/v1/auth/singup/ endpoint with a JSON payload containing the username, email, password
+and other filed according to example below. It needs for token`s receiving. Your next step is to use token in "Bearer type" authentication.  
 ```
-POST /api/v1/auth/login/ 
+POST /api/v1/auth/singup/ 
 
 {
-    "username": "user"
-    "email": "user@example.com",
-    "password": "your_password",
+    "userName":"username",
+    "firstName": "firstName",
+    "lastName": "lastName",
+    "email":"email@gmail.com",
+    "password":"password"
 }
 ```
 
 #### 2. Create a new user manually
-To register a new user, make a POST request to the /api/v1/users/ endpoint with a JSON payload containing the username, email, and password
-```
-POST /api/v1/users/ 
-
-{
-    "username": "user"
-    "email": "user@example.com",
-    "password": "your_password",
-}
-```
-
-#### 2. Find post by id
-To find a post, make a GET request to the /api/v1/posts/ endpoint and type path variable '{id}' (post`s id)
-```
-GET /api/v1/posts/{id} 
-```
-
-If post with this id is exists, you will receive information in JSON format like this:
-
-```
-{
-"id": "string_value",
-"content": "content_value",
-"authorId": "authorId_value",
-"likesId": [],
-"commentsId": []
-}
-```
