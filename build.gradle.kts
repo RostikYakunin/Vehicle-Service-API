@@ -64,3 +64,7 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+springBoot {
+    mainClass.set("com.vehicle_service_spring_v2.VehicleServiceApp")
+}

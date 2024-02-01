@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: unless-stopped
+    container_name: postgres
+    env_file: .env
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - db:/data/db
+    healthcheck:
+      test: ["CMD","pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  flyway:
+    image: flyway/flyway:latest
+    restart: no
+    container_name: flyway
+    env_file: .env
+    environment:
+      - FLYWAY_USER=${POSTGRES_USER}
+      - FLYWAY_PASSWORD=${POSTGRES_PASSWORD}
+      - FLYWAY_URL=jdbc:postgresql://postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+      - FLYWAY_SCHEMAS=public
+    command: -connectRetries=5 migrate
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+    depends_on:
+      - postgres
+
+  vehicle-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vehicle-app:latest
+    container_name: vehicle-app
+    env_file: .env
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    depends_on:
+      - postgres
+
+volumes:
+  db:
