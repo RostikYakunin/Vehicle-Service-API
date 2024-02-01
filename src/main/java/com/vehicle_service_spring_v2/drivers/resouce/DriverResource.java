@@ -8,7 +8,6 @@ import com.vehicle_service_spring_v2.utils.ViewMapperUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,24 +40,15 @@ public class DriverResource {
                             description = "DriverDto object",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Driver is created"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @PostMapping
     public ResponseEntity<DriverView> createDriver(@RequestBody @Valid DriverDto driverDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -80,24 +70,15 @@ public class DriverResource {
                             description = "Driver`s id",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Driver is found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping("/{id}")
     public ResponseEntity<DriverView> findDriverById(@PathVariable long id) {
         return ResponseEntity.ok(
@@ -124,28 +105,20 @@ public class DriverResource {
                             description = "Driver object with new fields which you want to update",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Driver is updated"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @PutMapping("/{id}")
     public ResponseEntity<DriverView> updateDriver(
             @PathVariable Long id,
-            @RequestBody @Valid DriverDto driverDto) {
+            @RequestBody @Valid DriverDto driverDto
+    ) {
         return ResponseEntity.ok(
                 Stream.of(driverService.updateDriver(id, driverDto))
                         .map(viewMapperUtil::toDriverView)
@@ -165,24 +138,15 @@ public class DriverResource {
                             description = "driver`s id which you want to update",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Driver is deleted"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDriverById(@PathVariable long id) {
         boolean result = driverService.deleteDriverById(id);
@@ -207,26 +171,20 @@ public class DriverResource {
                             description = "Transport`s id",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Driver added to transport"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @PutMapping("/driver_to_transport/{d_id}/{t_id}")
-    public ResponseEntity<String> addDriverOnTransport(@PathVariable long d_id, @PathVariable long t_id) {
+    public ResponseEntity<String> addDriverOnTransport(
+            @PathVariable long d_id,
+            @PathVariable long t_id
+    ) {
         boolean result = driverService.addDriverOnTransport(d_id, t_id);
 
         return result
@@ -243,24 +201,15 @@ public class DriverResource {
                             description = "Driver`s surname",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Drivers are found by surname"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping("/surname/{surname}")
     public ResponseEntity<List<DriverView>> findAllDriverBySurname(@PathVariable String surname) {
         return ResponseEntity.ok(driverService.findAllDriverBySurname(surname).stream()
@@ -277,24 +226,15 @@ public class DriverResource {
                             description = "Route`s id",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Drivers are found on the route"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping("/drivers_on_route/{id}")
     public ResponseEntity<Set<DriverView>> findAllDriverOnRoute(@PathVariable long id) {
         return ResponseEntity.ok(
@@ -306,24 +246,15 @@ public class DriverResource {
 
     @Operation(
             summary = "Find all transports without drivers",
-            description = "It is used to find all transports without any drivers"
+            description = "It is used to find all transports without any drivers",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Transports without drivers are found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping("/transport_without_driver")
     public ResponseEntity<List<TransportView>> findAllTransportsWithoutDriver() {
         return ResponseEntity.ok(
@@ -335,24 +266,15 @@ public class DriverResource {
 
     @Operation(
             summary = "Find all drivers",
-            description = "It is used to find all drivers"
+            description = "It is used to find all drivers",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "All drivers are found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping
     public ResponseEntity<List<DriverView>> findAllDrivers() {
         return ResponseEntity.ok(

@@ -7,7 +7,6 @@ import com.vehicle_service_spring_v2.utils.ViewMapperUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,24 +37,15 @@ public class TransportResource {
                             description = "transportDto object",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Transport successfully created"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @PostMapping
     public ResponseEntity<TransportView> createTransport(@RequestBody TransportDto transportDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -77,24 +67,15 @@ public class TransportResource {
                             description = "Transport`s id",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Transport is found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping("/{id}")
     public ResponseEntity<TransportView> findTransportById(@PathVariable long id) {
         return ResponseEntity.ok(
@@ -119,28 +100,20 @@ public class TransportResource {
                             description = "transport object with new fields which you want to update",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Transport updated"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @PutMapping("/{id}")
     public ResponseEntity<TransportView> updateTransport(
             @PathVariable Long id,
-            @RequestBody TransportDto transportDto) {
+            @RequestBody TransportDto transportDto
+    ) {
         return ResponseEntity.ok(
                 Stream.of(transportService.updateTransport(id, transportDto))
                         .map(viewMapperUtil::toTransportView)
@@ -158,24 +131,15 @@ public class TransportResource {
                             description = "Transport`s id which you want to update",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Transport deleted"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTransportById(@PathVariable long id) {
         transportService.deleteTransportById(id);
@@ -184,24 +148,15 @@ public class TransportResource {
 
     @Operation(
             summary = "Find all existed transports",
-            description = "It is used to find all existed transports"
+            description = "It is used to find all existed transports",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Transports are found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping
     public ResponseEntity<List<TransportView>> findAllTransports() {
         return ResponseEntity.ok(
@@ -220,24 +175,15 @@ public class TransportResource {
                             description = "Transport`s brand",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Transports are found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping("/by_brand/{brand}")
     public ResponseEntity<List<TransportView>> findTransportByBrand(@PathVariable String brand) {
         return ResponseEntity.ok(
@@ -249,24 +195,15 @@ public class TransportResource {
 
     @Operation(
             summary = "Find all transports without drivers",
-            description = "It is used to find all transports without any drivers"
+            description = "It is used to find all transports without any drivers",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Transports are found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping("/without_driver")
     public ResponseEntity<List<TransportView>> findTransportWithoutDriver() {
         return ResponseEntity.ok(
@@ -291,26 +228,20 @@ public class TransportResource {
                             description = "Route`s id",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Transport added to route"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @PutMapping("/transport_to_route/{transportId}/{routeId}")
-    public ResponseEntity<?> addTransportToRoute(@PathVariable long transportId, @PathVariable long routeId) {
+    public ResponseEntity<?> addTransportToRoute(
+            @PathVariable long transportId,
+            @PathVariable long routeId
+    ) {
         boolean result = transportService.addTransportToRoute(transportId, routeId);
 
         return result
@@ -333,24 +264,15 @@ public class TransportResource {
                             description = "Route`s id",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Transport removed from route"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @DeleteMapping("/transport_from_route/{transportId}/{routeId}")
     public ResponseEntity<?> removeTransportFromRoute(@PathVariable long transportId, @PathVariable long routeId) {
         boolean result = transportService.removeTransportFromRoute(transportId, routeId);

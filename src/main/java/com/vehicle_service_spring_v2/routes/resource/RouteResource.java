@@ -8,7 +8,6 @@ import com.vehicle_service_spring_v2.utils.ViewMapperUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,24 +39,15 @@ public class RouteResource {
                             description = "RouteDto object",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Route is created"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @PostMapping
     public ResponseEntity<RouteView> createRoute(@RequestBody @Valid RouteDto routeDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -79,24 +69,15 @@ public class RouteResource {
                             description = "Route`s id",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Route is found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping("/{id}")
     public ResponseEntity<RouteView> findRouteById(@PathVariable long id) {
         return ResponseEntity.ok(
@@ -108,7 +89,6 @@ public class RouteResource {
                         ));
     }
 
-
     @Operation(
             summary = "Update existed route by id",
             description = "It is used to update existed route",
@@ -118,34 +98,25 @@ public class RouteResource {
                             description = "route`s id which you want to update",
                             required = true
                     ),
-
                     @Parameter(
                             name = "routeDto",
                             description = "Route object with new fields which you want to update",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Route updated"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @PutMapping("/{id}")
     public ResponseEntity<RouteView> updateRoute(
             @PathVariable long id,
-            @RequestBody @Valid RouteDto routeDto) {
+            @RequestBody @Valid RouteDto routeDto
+    ) {
         return ResponseEntity.ok(
                 Stream.of(routeService.updateRoute(id, routeDto))
                         .map(viewMapperUtil::toRoadView)
@@ -165,24 +136,15 @@ public class RouteResource {
                             description = "route`s id which you want to update",
                             required = true
                     )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Route is deleted"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
             }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRouteById(@PathVariable long id) {
         boolean result = routeService.deleteRouteById(id);
@@ -194,24 +156,15 @@ public class RouteResource {
 
     @Operation(
             summary = "Find all existed routes",
-            description = "It is used to find all existed routes"
+            description = "It is used to find all existed routes",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Routes are found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping
     public ResponseEntity<List<RouteView>> findAllRoutes() {
         return ResponseEntity.ok(
@@ -223,24 +176,15 @@ public class RouteResource {
 
     @Operation(
             summary = "Find all routes without transports",
-            description = "It is used to find all routes without transports"
+            description = "It is used to find all routes without transports",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Routes are found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            }
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status 200 SUCCESS"
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "HTTP Status 403 FORBIDDEN"
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "HTTP Status 404 NOT_FOUND"
-            )
-    })
     @GetMapping("/all_without_transport")
     public ResponseEntity<List<RouteView>> findAllRoutesWithoutTransport() {
         return ResponseEntity.ok(
