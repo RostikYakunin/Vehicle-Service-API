@@ -68,3 +68,8 @@ tasks.withType<Test> {
 springBoot {
     mainClass.set("com.vehicle_service_spring_v2.VehicleServiceApp")
 }
+
+tasks.jar {
+    archiveFileName.set("app.jar")
+    destinationDirectory.set(file("build/libs"))
+}
