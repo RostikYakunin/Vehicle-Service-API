@@ -8,12 +8,14 @@ import com.vehicle_service_spring_v2.transports.model.dto.TransportDtoMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class TransportDtoMapperTest {
     @Autowired
     TransportDtoMapper transportDtoMapper;
