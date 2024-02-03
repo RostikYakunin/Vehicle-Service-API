@@ -5,19 +5,13 @@ import com.vehicle_service_spring_v2.drivers.model.DriverQualificationEnum;
 import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.transports.model.Tram;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class DriverViewMapperTest {
-    @Autowired
-    DriverViewMapper driverViewMapper;
+    DriverViewMapper driverViewMapper = new DriverViewMapperImpl();
 
     @Test
     void driverToDriverView() {

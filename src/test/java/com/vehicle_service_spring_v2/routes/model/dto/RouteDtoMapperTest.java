@@ -9,11 +9,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class RouteDtoMapperTest {
-    @Autowired
-    RouteDtoMapper routeDtoMapper;
+    RouteDtoMapper routeDtoMapper = new RouteDtoMapperImpl();
 
     @Test
     @DisplayName("Mapping RouteDto to Route")

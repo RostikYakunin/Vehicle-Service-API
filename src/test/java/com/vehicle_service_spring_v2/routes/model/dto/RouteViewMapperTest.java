@@ -4,19 +4,13 @@ import com.vehicle_service_spring_v2.drivers.model.Driver;
 import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.transports.model.Tram;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class RouteViewMapperTest {
-    @Autowired
-    RouteViewMapper routeViewMapper;
+    RouteViewMapper routeViewMapper = new RouteViewMapperImpl();
 
     @Test
     void routeToRouteView() {

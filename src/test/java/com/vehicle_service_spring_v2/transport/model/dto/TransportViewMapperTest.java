@@ -5,24 +5,18 @@ import com.vehicle_service_spring_v2.drivers.model.DriverQualificationEnum;
 import com.vehicle_service_spring_v2.routes.model.Route;
 import com.vehicle_service_spring_v2.transports.model.Bus;
 import com.vehicle_service_spring_v2.transports.model.Tram;
-import com.vehicle_service_spring_v2.transports.model.dto.view.BusView;
-import com.vehicle_service_spring_v2.transports.model.dto.view.TramView;
-import com.vehicle_service_spring_v2.transports.model.dto.view.TransportView;
-import com.vehicle_service_spring_v2.transports.model.dto.view.TransportViewMapper;
+import com.vehicle_service_spring_v2.transports.model.dto.view.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-@ActiveProfiles("test")
+
 class TransportViewMapperTest {
     @Autowired
-    TransportViewMapper transportViewMapper;
+    TransportViewMapper transportViewMapper = new TransportViewMapperImpl();
 
     @Test
     void toBusView() {
