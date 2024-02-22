@@ -9,7 +9,7 @@ services:
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
-      - db:/data/db
+      - ./db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD","pg_isready", "-U", "${POSTGRES_USER}"]
       interval: 5s
@@ -47,12 +47,30 @@ services:
       - "8080:8080"
     restart: on-failure
     depends_on:
-      - postgres
+      - flyway
+    networks:
+      - my_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: always
+    ports:
+      - "8000:80"
+    environment:
+      PGADMIN_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_PASSWORD: ${PGADMIN_PASSWORD}
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - flyway
     networks:
       - my_network
 
 volumes:
-  db:
+  db-data:
+  pgadmin-data:
 
 networks:
   my_network:
+    driver: bridge

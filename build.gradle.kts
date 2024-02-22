@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com"
-version = "vehicle_service_spring_v2"
+version = "2.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
