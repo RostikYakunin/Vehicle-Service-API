@@ -58,10 +58,10 @@ services:
     ports:
       - "8000:80"
     environment:
-      PGADMIN_EMAIL: ${PGADMIN_EMAIL}
-      PGADMIN_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     volumes:
-      - pgadmin-data:/var/lib/pgadmin
+      - ./pgadmin-data:/var/lib/pgadmin
     depends_on:
       - flyway
     networks:
