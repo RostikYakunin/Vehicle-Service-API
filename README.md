@@ -20,7 +20,7 @@ and Transport service.
 - *Spring Boot:* A powerful and convention-over-configuration framework for Java applications, with modules: Spring Data, 
    Spring Validation, Spring Security and other.
 
-- *Open API:* document represents a formal description of an API that tools can use to generate code, documentation, test cases, and more.
+- *Open API:* Tool can use to generate code, documentation, test cases, and more for your API.
 
 - *Gradle:* A modern, versatile build tool for Java and Groovy projects.
 
@@ -30,10 +30,13 @@ and Transport service.
 
 - *JUnit and Mockito Framework:* Testing and specification frameworks for Java applications.
 
-- *Flyway:* Is an open-source database-migration tool.
+- *Flyway:* An open-source database-migration tool.
 
-- *Docker:* is an open source software platform used to create, deploy and manage virtualized application containers on 
+- *Docker:* An open source software platform used to create, deploy and manage virtualized application containers on 
    a common operating system (OS), with an ecosystem of allied tools.
+
+- *Jenkins:* An open source continuous integration (CI) server. It manages and controls several stages of the software 
+   delivery process, including build, documentation, automated testing, packaging, and static code analysis.
 
 ### Get started
 
