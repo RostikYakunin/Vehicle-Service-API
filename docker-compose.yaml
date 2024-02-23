@@ -44,8 +44,8 @@ services:
     container_name: vehicle-app
     env_file: .env
     ports:
-      - "8080:8080"
-    restart: on-failure
+      - ${SERVER_PORT}:${SERVER_PORT}
+    restart: unless-stopped
     depends_on:
       - flyway
     networks:
@@ -54,7 +54,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4
-    restart: always
+    restart: unless-stopped
     ports:
       - "8000:80"
     environment:

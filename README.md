@@ -15,14 +15,18 @@ and Transport service.
 
 ### Technologies Used
 
-**The project is built with the following major frameworks and technologies:**
+**The project is built with the following major frameworks, technologies and tools:**
 
 - *Spring Boot:* A powerful and convention-over-configuration framework for Java applications, with modules: Spring Data, 
    Spring Validation, Spring Security and other.
 
+- *Open API:* document represents a formal description of an API that tools can use to generate code, documentation, test cases, and more.
+
 - *Gradle:* A modern, versatile build tool for Java and Groovy projects.
 
 - *PostgreSQL:* A SQL database used for storing application data.
+
+- *pgAdmin:* Is the most popular and feature rich Open Source administration and development platform for PostgreSQL
 
 - *JUnit and Mockito Framework:* Testing and specification frameworks for Java applications.
 
@@ -58,12 +62,14 @@ and Transport service.
 ### Authentication and Token Management
 This section describes how to register, authenticate, and refresh tokens in the app using the provided REST API endpoints.
 
-Open API schemes are available here: http://localhost:8080/swagger-ui/index.html
+Additionally, you can read the Open API documentation here: http://localhost:8080/swagger-ui/index.html
 
 ### Examples
 #### 1. Register a new user using authentication
 To register a new user, make a POST request to the /api/v1/auth/singup/ endpoint with a JSON payload containing the username, email, password
-and other filed according to example below. It needs for token`s receiving. Your next step is to use token in "Bearer type" authentication.  
+and other filed according to example below. It needs for token`s receiving. Your next step is to use token in "Bearer type" authentication to
+get access to other functionality of the app.
+
 ```
 POST /api/v1/auth/singup/ 
 
@@ -76,4 +82,4 @@ POST /api/v1/auth/singup/
 }
 ```
 
-#### 2. Create a new user manually
+#### 2. 
