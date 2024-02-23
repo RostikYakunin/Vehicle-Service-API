@@ -6,6 +6,8 @@ services:
     restart: unless-stopped
     container_name: postgres
     env_file: .env
+    depends_on:
+      - jenkins
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
@@ -64,6 +66,20 @@ services:
       - ./pgadmin-data:/var/lib/pgadmin
     depends_on:
       - flyway
+    networks:
+      - my_network
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    restart: unless-stopped
+    privileged: true
+    user: root
+    ports:
+      - ${JENKINS_PORT}:${JENKINS_PORT}
+    volumes:
+      - ./jenkins_configuration:/var/jenkins_home
+      - ./docker.sock:/var/run/docker.sock
     networks:
       - my_network
 
