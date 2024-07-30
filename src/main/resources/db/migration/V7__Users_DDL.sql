@@ -1,13 +1,13 @@
 create table users
 (
-    role       smallint check (role between 0 and 2),
-    created    timestamp(6) with time zone,
-    id         bigserial    not null,
-    updated    timestamp(6) with time zone,
-    email      varchar(100) not null unique,
-    first_name varchar(255) not null,
-    last_name  varchar(255) not null,
-    password   varchar(255) not null,
-    user_name  varchar(255) not null unique,
-    primary key (id)
+    id BIGSERIAL PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    user_name VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    role VARCHAR(255),
+    user_token VARCHAR(255) NOT NULL UNIQUE
 )

@@ -5,10 +5,6 @@ spring:
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
-  jpa:
-    hibernate:
-      ddl-auto: validate
-
 security:
   jwt:
     secret-key: ${SECRET_KEY}

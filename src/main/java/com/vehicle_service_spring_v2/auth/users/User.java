@@ -1,5 +1,6 @@
 package com.vehicle_service_spring_v2.auth.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -36,6 +37,7 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @CreationTimestamp
@@ -46,7 +48,11 @@ public class User implements UserDetails {
     @Column(name = "updated")
     private Instant updatedAt;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "user_token", nullable = false, unique = true)
+    private String token;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

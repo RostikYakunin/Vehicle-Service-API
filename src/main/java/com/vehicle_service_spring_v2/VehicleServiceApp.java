@@ -21,15 +21,17 @@ public class VehicleServiceApp {
     @Bean
     public CommandLineRunner commandLineRunner(AuthenticationService authenticationService, JwtService jwtService) {
         return args -> {
-            var admin = UserRegisterDto.builder()
+            var adminDto = UserRegisterDto.builder()
                     .firstName("Admin")
                     .lastName("Admin")
                     .userName("Admin")
                     .email("admin@gmail.com")
                     .password("pass")
                     .build();
-            User signup = authenticationService.signup(admin);
-            String token = jwtService.generateToken(signup);
+
+
+            User adminUser = authenticationService.signup(adminDto);
+            String token = jwtService.generateToken(adminUser);
             log.info("Admin token: " + token);
         };
     }

@@ -1,5 +1,6 @@
 package com.vehicle_service_spring_v2.auth.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -31,5 +32,4 @@ public class UserRegisterDto {
     @Size(min = 8, max = 100)
     @NotEmpty(message = "Field \"password\" can not be empty ")
     private String password;
-
 }

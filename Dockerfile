@@ -8,5 +8,5 @@ RUN ./gradlew clean build
 FROM builder
 
 WORKDIR /app
-COPY --from=builder /app/build/libs/*.jar app.jar
-CMD ["java", "-jar", "app.jar"]
+COPY --from=builder /app/build/libs/*.jar /app/app.jar
+CMD ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "-jar", "/app/app.jar"]

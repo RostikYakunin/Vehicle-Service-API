@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 
 services:
   postgres:
@@ -6,8 +6,6 @@ services:
     restart: unless-stopped
     container_name: postgres
     env_file: .env
-    depends_on:
-      - jenkins
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
@@ -19,6 +17,10 @@ services:
       retries: 5
     networks:
       - my_network
+    profiles:
+      - dev
+      - full
+      - debug
 
   flyway:
     image: flyway/flyway:latest
@@ -34,9 +36,19 @@ services:
     volumes:
       - ./src/main/resources/db/migration:/flyway/sql
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - my_network
+    healthcheck:
+      test: [ "CMD-SHELL", "flyway info -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -url=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    profiles:
+      - dev
+      - full
+      - debug
 
   vehicle-app:
     build:
@@ -47,11 +59,19 @@ services:
     env_file: .env
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
+      - "5005:5005"
     restart: unless-stopped
-    depends_on:
-      - flyway
     networks:
       - my_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./build/libs:/app/build/libs
+    profiles:
+      - full
+      - debug
 
   pgadmin:
     image: dpage/pgadmin4
@@ -62,12 +82,18 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_DATA_DIR: /pgadmin-data
     volumes:
-      - ./pgadmin-data:/var/lib/pgadmin
+      - ./pgadmin-data:/var/lib/pgadmin-data
     depends_on:
-      - flyway
+      postgres:
+        condition: service_started
     networks:
       - my_network
+    profiles:
+      - dev
+      - full
+      - debug
 
   jenkins:
     image: jenkins/jenkins:lts
@@ -82,6 +108,9 @@ services:
       - ./docker.sock:/var/run/docker.sock
     networks:
       - my_network
+    profiles:
+      - jenkins
+      - full
 
 volumes:
   db-data:

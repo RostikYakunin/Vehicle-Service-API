@@ -20,6 +20,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public User signup(UserRegisterDto input) {
         Optional<User> byEmail = userRepository.findByEmail(input.getEmail());
@@ -35,6 +36,9 @@ public class AuthenticationService {
                 .email(input.getEmail())
                 .password(passwordEncoder.encode(input.getPassword()))
                 .build();
+
+        var token = jwtService.generateToken(user);
+        user.setToken(token);
 
         log.info("User is created" + user);
         return userRepository.save(user);
