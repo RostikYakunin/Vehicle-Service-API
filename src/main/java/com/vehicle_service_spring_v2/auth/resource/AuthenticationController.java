@@ -12,10 +12,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(
         name = "REST API for authentication and authorization",
@@ -83,5 +84,17 @@ public class AuthenticationController {
                 .build();
 
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @GetMapping()
+    @PreAuthorize("hasRole ('ADMIN')")
+    public ResponseEntity<List<User>> findAllUsers() {
+        return ResponseEntity.ok(authenticationService.findAll());
+    }
+
+    @DeleteMapping("/all")
+    @Secured("{ROLE_ADMIN}")
+    public void deleteAll() {
+        authenticationService.deleteAll();
     }
 }

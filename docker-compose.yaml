@@ -18,9 +18,8 @@ services:
     networks:
       - my_network
     profiles:
+      - prod
       - dev
-      - full
-      - debug
 
   flyway:
     image: flyway/flyway:latest
@@ -30,7 +29,7 @@ services:
     environment:
       - FLYWAY_USER=${POSTGRES_USER}
       - FLYWAY_PASSWORD=${POSTGRES_PASSWORD}
-      - FLYWAY_URL=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - FLYWAY_URL=jdbc:postgresql://postgres:${POSTGRES_PORT}/${POSTGRES_DB}
       - FLYWAY_SCHEMAS=public
     command: -connectRetries=5 migrate
     volumes:
@@ -41,14 +40,13 @@ services:
     networks:
       - my_network
     healthcheck:
-      test: [ "CMD-SHELL", "flyway info -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -url=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}" ]
+      test: [ "CMD-SHELL", "flyway info -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -url=jdbc:postgresql://postgres:${POSTGRES_PORT}/${POSTGRES_DB}" ]
       interval: 10s
       timeout: 5s
       retries: 3
     profiles:
+      - prod
       - dev
-      - full
-      - debug
 
   vehicle-app:
     build:
@@ -70,15 +68,15 @@ services:
       - ./src:/app/src
       - ./build/libs:/app/build/libs
     profiles:
-      - full
-      - debug
+      - prod
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4
     restart: unless-stopped
+    env_file: .env
     ports:
-      - "8000:80"
+      - ${PGADMIN_PORT}:80
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
@@ -91,9 +89,8 @@ services:
     networks:
       - my_network
     profiles:
+      - prod
       - dev
-      - full
-      - debug
 
   jenkins:
     image: jenkins/jenkins:lts
@@ -101,6 +98,7 @@ services:
     restart: unless-stopped
     privileged: true
     user: root
+    env_file: .env
     ports:
       - ${JENKINS_PORT}:${JENKINS_PORT}
     volumes:
@@ -109,8 +107,7 @@ services:
     networks:
       - my_network
     profiles:
-      - jenkins
-      - full
+      - prod
 
 volumes:
   db-data:

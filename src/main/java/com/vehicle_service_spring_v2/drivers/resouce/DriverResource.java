@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,6 +51,7 @@ public class DriverResource {
             }
     )
     @PostMapping
+    @PreAuthorize("hasRole ('ADMIN')")
     public ResponseEntity<DriverView> createDriver(@RequestBody @Valid DriverDto driverDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 Stream.of(driverService.addDriver(driverDto))

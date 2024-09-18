@@ -2,6 +2,7 @@ package com.vehicle_service_spring_v2.auth.services;
 
 import com.vehicle_service_spring_v2.auth.dto.UserLoginDto;
 import com.vehicle_service_spring_v2.auth.dto.UserRegisterDto;
+import com.vehicle_service_spring_v2.auth.users.Role;
 import com.vehicle_service_spring_v2.auth.users.User;
 import com.vehicle_service_spring_v2.auth.users.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,8 +36,13 @@ public class AuthenticationService {
                 .lastName(input.getLastName())
                 .userName(input.getUserName())
                 .email(input.getEmail())
+                .role(Role.ROLE_USER)
                 .password(passwordEncoder.encode(input.getPassword()))
                 .build();
+
+        if (!userRepository.existsByRole(Role.ROLE_ADMIN)){
+            user.setRole(Role.ROLE_ADMIN);
+        }
 
         var token = jwtService.generateToken(user);
         user.setToken(token);
@@ -54,5 +61,13 @@ public class AuthenticationService {
 
         return userRepository.findByEmail(input.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found by this email"));
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public void deleteAll() {
+        userRepository.deleteAll();
     }
 }
